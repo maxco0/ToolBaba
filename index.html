@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tool Baba – Lifetime Free Online PDF, Image & Text Tools</title>
+<meta name="description" content="Tool Baba offers lifetime free online tools for PDF, image, text and utilities. Unlimited usage, no signup, works directly in your browser.">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#f4f6fb;color:#222;line-height:1.7}
+
+/* HEADER */
+header{background:#fff;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:1000}
+.header-wrap{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+.logo{font-size:22px;font-weight:700;color:#e63946}
+nav ul{list-style:none;display:flex;gap:18px}
+nav a{text-decoration:none;color:#333;font-size:14px}
+.menu-btn{display:none;font-size:24px;cursor:pointer}
+
+@media(max-width:768px){
+nav{display:none;position:absolute;top:60px;left:0;width:100%;background:#fff;border-bottom:1px solid #ddd}
+nav ul{flex-direction:column;padding:16px}
+.menu-btn{display:block}
+}
+
+/* MAIN */
+main{max-width:1200px;margin:auto;padding:22px}
+
+/* TOOLS GRID */
+.tools-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+margin-top:24px
+}
+.tool-card{
+background:#fff;
+border:1px solid #e3e3e3;
+border-radius:10px;
+padding:18px;
+text-decoration:none;
+color:#222;
+transition:0.2s
+}
+.tool-card:hover{box-shadow:0 8px 20px rgba(0,0,0,0.08)}
+.tool-icon{font-size:30px}
+.tool-title{font-weight:700;margin-top:10px}
+.tool-desc{font-size:13px;color:#555;margin-top:6px}
+
+@media(max-width:768px){
+.tools-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ARTICLE */
+.article{
+background:#fff;
+margin-top:40px;
+padding:30px;
+border-radius:10px
+}
+.article h1{font-size:26px}
+.article h2{font-size:22px;margin-top:28px}
+.article h3{font-size:18px;margin-top:22px}
+.article p{margin-top:14px;text-align:justify}
+
+/* FOOTER */
+footer{background:#111;color:#ccc;margin-top:50px}
+.footer-wrap{max-width:1200px;margin:auto;padding:28px}
+.footer-links{display:flex;flex-wrap:wrap;gap:18px;margin-top:12px}
+.footer-links a{color:#ccc;text-decoration:none;font-size:14px}
+.footer-bottom{margin-top:18px;font-size:13px;color:#888}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-wrap">
+    <div class="logo">Tool Baba</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <nav id="menu">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">PDF Tools</a></li>
+        <li><a href="#">Image Tools</a></li>
+        <li><a href="#">Text Tools</a></li>
+        <li><a href="#">All Tools</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<h1>Tool Baba – Lifetime Free Online Tools</h1>
+<p>Unlimited usage • No signup • No watermark • Works directly in your browser</p>
+
+<section class="tools-grid">
+
+<a href="#" class="tool-card"><div class="tool-icon">📄</div><div class="tool-title">PDF Merge</div><div class="tool-desc">Combine multiple PDF files into one document.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">✂️</div><div class="tool-title">PDF Split</div><div class="tool-desc">Split PDF pages easily.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🗜️</div><div class="tool-title">PDF Compress</div><div class="tool-desc">Reduce PDF file size.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🖼️</div><div class="tool-title">PDF to Image</div><div class="tool-desc">Convert PDF pages to images.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">📷</div><div class="tool-title">Image to PDF</div><div class="tool-desc">Turn images into PDF files.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔤</div><div class="tool-title">Word Counter</div><div class="tool-desc">Count words and characters.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔠</div><div class="tool-title">Text Case Converter</div><div class="tool-desc">Convert text to upper or lower case.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">📜</div><div class="tool-title">Remove Duplicate Lines</div><div class="tool-desc">Remove repeated lines from text.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🧾</div><div class="tool-title">JSON Formatter</div><div class="tool-desc">Format and beautify JSON data.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔐</div><div class="tool-title">Base64 Encode</div><div class="tool-desc">Encode text to Base64.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔓</div><div class="tool-title">Base64 Decode</div><div class="tool-desc">Decode Base64 content.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🖼️</div><div class="tool-title">Image Compressor</div><div class="tool-desc">Compress image size online.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">📐</div><div class="tool-title">Resize Image</div><div class="tool-desc">Resize images without quality loss.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔄</div><div class="tool-title">Rotate Image</div><div class="tool-desc">Rotate images easily.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔳</div><div class="tool-title">QR Code Generator</div><div class="tool-desc">Create QR codes instantly.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🔑</div><div class="tool-title">Password Generator</div><div class="tool-desc">Generate strong passwords.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🌐</div><div class="tool-title">URL Encoder</div><div class="tool-desc">Encode URL strings.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🌍</div><div class="tool-title">URL Decoder</div><div class="tool-desc">Decode encoded URLs.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">📄</div><div class="tool-title">HTML Minifier</div><div class="tool-desc">Minify HTML code.</div></a>
+<a href="#" class="tool-card"><div class="tool-icon">🎨</div><div class="tool-title">CSS Minifier</div><div class="tool-desc">Minify CSS files.</div></a>
+
+</section>
+
+<section class="article">
+
+<h2>What is Tool Baba?</h2>
+<p>
+Tool Baba is a lifetime free online tools platform created for people who want simple, fast, and reliable utilities without paying money or creating accounts. Many websites promise free tools but later add limits, watermarks, or subscriptions. Tool Baba is built with a clear promise: every tool available here will remain free for lifetime use.
+</p>
+
+<h2>Why Lifetime Free Tools Matter</h2>
+<p>
+In today’s digital world, small tasks like merging a PDF, compressing an image, or formatting text should not require expensive software. Students, office workers, freelancers, and small business owners often need these tools for daily work. Tool Baba removes barriers by offering unlimited usage without hidden conditions.
+</p>
+
+<h2>How Tool Baba Works</h2>
+<p>
+All tools on Tool Baba work directly inside your web browser. Files are processed locally on your device, which means they are not uploaded to any server. This approach improves privacy and also reduces waiting time. Once you close the page, your files are automatically gone.
+</p>
+
+<h2>PDF Tools Explained</h2>
+<h3>PDF Merge</h3>
+<p>
+The PDF Merge tool allows users to combine multiple PDF files into a single document. This is useful for assignments, reports, and invoices where multiple files need to be shared as one.
+</p>
+
+<h3>PDF Split</h3>
+<p>
+PDF Split helps extract specific pages from a large PDF file. Instead of sending a full document, users can split and share only the required pages.
+</p>
+
+<h3>PDF Compress</h3>
+<p>
+Large PDF files are difficult to upload or email. The PDF Compress tool reduces file size while keeping content readable, making sharing easier.
+</p>
+
+<h2>Image Tools Overview</h2>
+<h3>Image to PDF</h3>
+<p>
+Image to PDF converts photos and scanned documents into a single PDF file. This is especially useful for mobile users who scan documents using their phone camera.
+</p>
+
+<h3>Image Compressor</h3>
+<p>
+The Image Compressor reduces image size without noticeable quality loss. Smaller images load faster and save storage space.
+</p>
+
+<h3>Resize and Rotate Image</h3>
+<p>
+Resize Image changes dimensions to fit specific requirements, while Rotate Image corrects orientation issues commonly seen in mobile photos.
+</p>
+
+<h2>Text & Utility Tools</h2>
+<h3>Word Counter</h3>
+<p>
+Word Counter helps writers, students, and bloggers check word and character counts instantly. This is useful for essays, articles, and assignments with word limits.
+</p>
+
+<h3>Text Case Converter</h3>
+<p>
+This tool converts text into uppercase, lowercase, or sentence case, saving time during editing.
+</p>
+
+<h3>Remove Duplicate Lines</h3>
+<p>
+When working with large text files or lists, duplicate lines can cause confusion. This tool cleans repeated lines with one click.
+</p>
+
+<h3>JSON Formatter</h3>
+<p>
+JSON Formatter improves readability of JSON data, making it easier for developers and learners to understand structured information.
+</p>
+
+<h3>Base64 & URL Tools</h3>
+<p>
+Base64 Encode and Decode tools help convert data formats, while URL Encoder and Decoder make web links safe to share and process.
+</p>
+
+<h2>Who Can Use Tool Baba?</h2>
+<p>
+Tool Baba is designed for everyone. Students, professionals, freelancers, developers, and even casual users can benefit from these tools. No technical knowledge is required, and the interface is simple and clean.
+</p>
+
+<h2>Mobile and Desktop Friendly</h2>
+<p>
+The website layout adapts automatically to different screen sizes. On mobile devices, tools are displayed in two columns, while desktop users see three columns. Navigation menus are optimized for touch and click.
+</p>
+
+<h2>Privacy and Security</h2>
+<p>
+Privacy is a top priority at Tool Baba. Since files are processed locally, there is no risk of data being stored or shared. This makes the platform suitable for sensitive documents.
+</p>
+
+<h2>Conclusion</h2>
+<p>
+Tool Baba is more than just a collection of tools. It is a commitment to free access, privacy, and simplicity. With lifetime free usage and no restrictions, Tool Baba aims to become a trusted companion for everyday digital tasks.
+</p>
+
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-links">
+      <a href="#">About</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+      <a href="#">All Tools</a>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Tool Baba. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(){
+  var m=document.getElementById("menu");
+  m.style.display = m.style.display==="block" ? "none" : "block";
+}
+</script>
+
+</body>
+</html>
