@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter – Tool Baba</title>
+    <meta name="description" content="Free online Word Counter tool. Count words, characters, sentences, and paragraphs in real-time. Secure, browser-based, and perfect for writers.">
+    
+    <!-- GOOGLE ADSENSE SCRIPT START -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+    <!-- GOOGLE ADSENSE SCRIPT END -->
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3 { font-weight: 700; line-height: 1.3; color: var(--text-main); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Tool Section */
+        .tool-wrapper {
+            margin-top: 40px;
+            background: transparent;
+        }
+
+        .tool-header { text-align: center; margin-bottom: 30px; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-light); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-number { font-size: 26px; font-weight: 800; color: var(--primary); display: block; margin-bottom: 2px; }
+        .stat-label { font-size: 12px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Input Area */
+        .input-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border);
+        }
+        textarea {
+            width: 100%;
+            height: 350px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-main);
+            resize: vertical;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+        
+        .clear-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .clear-btn:hover { background-color: #dc2626; }
+
+        /* Ads Container */
+        .ad-container {
+            margin: 30px auto;
+            text-align: center;
+            padding: 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 14px;
+            max-width: 100%;
+        }
+
+        /* Article Content */
+        .content-section {
+            padding: 40px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .article-content { max-width: 800px; margin: 0 auto; }
+        .article-content h2 { font-size: 1.8rem; margin: 40px 0 20px; color: var(--text-main); }
+        .article-content h3 { font-size: 1.4rem; margin: 30px 0 15px; color: var(--primary-dark); }
+        .article-content p { margin-bottom: 20px; font-size: 1.05rem; color: #334155; text-align: justify; }
+        .article-content ul { list-style: none; margin-bottom: 25px; }
+        .article-content li { margin-bottom: 10px; font-size: 1.05rem; padding-left: 20px; position: relative; color: #334155; }
+        .article-content li::before { content: "•"; color: var(--primary); font-weight: bold; position: absolute; left: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card:first-child { grid-column: span 2; } /* Make Word count full width on mobile */
+            .tool-header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container tool-wrapper">
+        
+        <div class="tool-header">
+            <h1>Online Word Counter</h1>
+            <p>Calculate words, characters, and sentences instantly.</p>
+        </div>
+
+        <!-- Live Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number" id="wordCount">0</span>
+                <span class="stat-label">Words</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="charCount">0</span>
+                <span class="stat-label">Characters</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="charNoSpaceCount">0</span>
+                <span class="stat-label">No Spaces</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="sentenceCount">0</span>
+                <span class="stat-label">Sentences</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="paraCount">0</span>
+                <span class="stat-label">Paragraphs</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-box">
+            <textarea id="textInput" placeholder="Start typing or paste your document here..."></textarea>
+            
+            <div class="control-bar">
+                <!-- Ad Placeholder Small (Button Area) -->
+                <div style="font-size: 12px; color: #94a3b8;">
+                    <!-- Insert Small Ad Unit Here -->
+                </div>
+                
+                <button class="clear-btn" id="clearBtn">Clear Text</button>
+            </div>
+        </div>
+
+        <!-- Middle Ad Unit -->
+        <div class="ad-container">
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT START -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT END -->
+            <p style="margin-top:10px;">Advertisement</p>
+        </div>
+
+        <!-- Article Section -->
+        <section class="content-section">
+            <article class="article-content">
+                <h2>Why Every Word Counts</h2>
+                <p>
+                    Writing is an art, but in the digital world, it is also a science. Whether you are drafting a tweet, writing a college essay, or preparing a report for work, the length of your text matters. A simple "Word Counter" does more than just tally numbers; it acts as a guide to ensure your message is concise, clear, and impactful.
+                </p>
+                <p>
+                    Tool Baba brings you a seamless, distraction-free environment to analyze your text. We understand that when inspiration strikes, you don't want to be bogged down by slow software or complicated menus. You need a tool that works as fast as you think.
+                </p>
+
+                <h3>More Than Just a Number</h3>
+                <p>
+                    Counting words is standard, but understanding the structure of your writing is advanced. This tool provides a holistic view of your content.
+                </p>
+                <ul>
+                    <li><strong>Character Count:</strong> Essential for social media limits (like Twitter/X) and Google SEO meta descriptions.</li>
+                    <li><strong>Sentence Count:</strong> Helps you gauge the complexity of your writing. Too many short sentences can sound choppy; too many long ones can be confusing.</li>
+                    <li><strong>Paragraph Count:</strong> Vital for web readability. Large walls of text scare readers away. Breaking them into smaller paragraphs keeps the user engaged.</li>
+                </ul>
+
+                <h2>How to Use This Tool</h2>
+                <p>
+                    We designed this tool to be intuitive. There is no learning curve. simply:
+                </p>
+                <p>
+                    1. <strong>Type or Paste:</strong> Click inside the large white box and start writing. Or, copy text from another document and paste it here.<br>
+                    2. <strong>Watch the Magic:</strong> The numbers at the top update instantly. There is no "Submit" button to press.<br>
+                    3. <strong>Edit and Refine:</strong> Use the data to adjust your text. Need to cut 50 words? You will see the count drop as you delete.<br>
+                    4. <strong>Clear:</strong> Once you are done, hit the red "Clear Text" button to start fresh.
+                </p>
+
+                <h3>Privacy First: Your Data Stays With You</h3>
+                <p>
+                    This is the most important feature of Tool Baba. Unlike many other online tools, our Word Counter runs <strong>100% in your browser</strong>.
+                </p>
+                <p>
+                    What does this mean? It means your text is <strong>never</strong> uploaded to our servers. We do not store, read, or analyze your content. You could be writing a personal diary entry or confidential business strategy—it remains completely private on your device. You can even load this page, turn off your internet connection, and the tool will still function perfectly.
+                </p>
+
+                <h2>Common Use Cases</h2>
+                <h3>For Students</h3>
+                <p>
+                    Professors love word limits. Whether it is a 500-word abstract or a 10,000-word dissertation, hitting the target is crucial for your grade. Use this tool to ensure you aren't under-delivering or rambling on too long.
+                </p>
+
+                <h3>For Content Creators & SEO</h3>
+                <p>
+                    In the world of Search Engine Optimization (SEO), length correlates with ranking. Detailed articles (often 1,500+ words) tend to rank higher on Google. However, title tags must be kept under 60 characters to avoid being cut off. Tool Baba helps you balance these conflicting requirements effortlessly.
+                </p>
+
+                <h3>For Translators</h3>
+                <p>
+                    Many translation jobs are billed by character count without spaces. Our specific "No Spaces" counter allows freelancers to calculate their quotes accurately, ensuring they get paid for every letter they translate.
+                </p>
+
+                <h3>Tips for Better Writing</h3>
+                <p>
+                    Don't just write to fill space. Use the paragraph counter to check your formatting. If you have written 1,000 words but only have 2 paragraphs, your text is likely too dense. Aim for a new paragraph every 100-150 words to make your content easier to scan on mobile devices.
+                </p>
+                <p>
+                    Tool Baba is committed to providing free, high-quality utilities for everyone. We hope this Word Counter helps you write better, faster, and with more confidence.
+                </p>
+            </article>
+        </section>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const textInput = document.getElementById('textInput');
+        const wordCountDisplay = document.getElementById('wordCount');
+        const charCountDisplay = document.getElementById('charCount');
+        const charNoSpaceDisplay = document.getElementById('charNoSpaceCount');
+        const sentenceCountDisplay = document.getElementById('sentenceCount');
+        const paraCountDisplay = document.getElementById('paraCount');
+        const clearBtn = document.getElementById('clearBtn');
+
+        function updateCounts() {
+            const text = textInput.value;
+
+            // 1. Character Count
+            charCountDisplay.innerText = text.length;
+
+            // 2. Character Count (No Spaces)
+            const textWithoutSpaces = text.replace(/\s/g, '');
+            charNoSpaceDisplay.innerText = textWithoutSpaces.length;
+
+            // 3. Word Count
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            wordCountDisplay.innerText = words.length;
+
+            // 4. Sentence Count
+            const sentences = text.split(/[.!?]+(?:\s+|$)/).filter(sentence => sentence.trim().length > 0);
+            sentenceCountDisplay.innerText = sentences.length;
+
+            // 5. Paragraph Count
+            const paragraphs = text.split(/\n+/).filter(para => para.trim().length > 0);
+            paraCountDisplay.innerText = paragraphs.length;
+        }
+
+        textInput.addEventListener('input', updateCounts);
+
+        clearBtn.addEventListener('click', () => {
+            textInput.value = '';
+            updateCounts();
+            textInput.focus();
+        });
+    </script>
+
+</body>
+  </html>
