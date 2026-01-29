@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Duplicate Lines – Tool Baba</title>
+    <meta name="description" content="Free online tool to remove duplicate lines from text lists. Clean email lists, SEO keywords, and data logs instantly. Browser-based, secure, and preserves order.">
+    
+    <!-- GOOGLE ADSENSE SCRIPT START -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+    <!-- GOOGLE ADSENSE SCRIPT END -->
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3 { font-weight: 700; line-height: 1.3; color: var(--text-main); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Tool Wrapper */
+        .tool-wrapper { margin-top: 40px; }
+
+        .tool-header { text-align: center; margin-bottom: 30px; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-light); }
+
+        /* Tool Box */
+        .tool-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border);
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .stat-item strong { color: var(--primary); }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-main);
+            resize: vertical;
+            outline: none;
+            font-family: "Menlo", "Monaco", "Courier New", monospace; /* Monospace for lists */
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+        textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+
+        /* Controls */
+        .controls-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background-color: #f1f5f9; }
+
+        .btn-danger {
+            background-color: white;
+            color: var(--danger);
+            border: 1px solid var(--border);
+        }
+        .btn-danger:hover { background-color: #fef2f2; border-color: #fecaca; }
+
+        /* Options Checkbox */
+        .options-row {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 20px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+        }
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Ad Container */
+        .ad-container {
+            margin: 30px auto;
+            text-align: center;
+            padding: 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 14px;
+            max-width: 100%;
+        }
+
+        /* Article Content */
+        .content-section {
+            padding: 40px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .article-content { max-width: 800px; margin: 0 auto; }
+        .article-content h2 { font-size: 1.8rem; margin: 40px 0 20px; color: var(--text-main); }
+        .article-content h3 { font-size: 1.4rem; margin: 30px 0 15px; color: var(--primary-dark); }
+        .article-content p { margin-bottom: 20px; font-size: 1.05rem; color: #334155; text-align: justify; }
+        .article-content ul { list-style: none; margin-bottom: 25px; }
+        .article-content li { margin-bottom: 10px; font-size: 1.05rem; padding-left: 20px; position: relative; color: #334155; }
+        .article-content li::before { content: "•"; color: var(--primary); font-weight: bold; position: absolute; left: 0; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--text-main);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .toast.show { opacity: 1; visibility: visible; bottom: 40px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls-area { flex-direction: column; align-items: stretch; }
+            .btn-group { flex-direction: column; }
+            .tool-header h1 { font-size: 1.8rem; }
+            .options-row { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container tool-wrapper">
+        <div class="tool-header">
+            <h1>Remove Duplicate Lines</h1>
+            <p>Clean your text lists, remove repeated lines, and organize data instantly.</p>
+        </div>
+
+        <div class="tool-box">
+            <div class="stats-bar">
+                <span class="stat-item">Lines: <strong id="lineCount">0</strong></span>
+                <span class="stat-item">Duplicates Found: <strong id="dupCount">0</strong></span>
+            </div>
+
+            <div class="options-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="trimOption" checked>
+                    Ignore Empty Lines
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="caseOption">
+                    Case Sensitive (A != a)
+                </label>
+            </div>
+
+            <textarea id="textInput" placeholder="Paste your list here (e.g., emails, keywords, names)...&#10;One item per line."></textarea>
+            
+            <div class="controls-area">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="removeDuplicates()">
+                        ✨ Remove Duplicates
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyText()">
+                        📋 Copy Result
+                    </button>
+                </div>
+                <button class="btn btn-danger" onclick="clearText()">
+                    🗑️ Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Ad Unit -->
+        <div class="ad-container">
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT START -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT END -->
+            <p style="margin-top:10px;">Advertisement</p>
+        </div>
+
+        <!-- Article Section -->
+        <section class="content-section">
+            <article class="article-content">
+                <h2>The Ultimate Guide to Data Cleaning and Deduplication</h2>
+                <p>
+                    In the digital age, we deal with lists constantly. Whether you are a marketer managing email subscribers, a developer analyzing server logs, or a student compiling research citations, lists are the backbone of organization. However, lists have a common enemy: <strong>duplicates</strong>. Duplicate lines create clutter, cause errors, and waste valuable processing time.
+                </p>
+                <p>
+                    <strong>Tool Baba’s Remove Duplicate Lines</strong> tool is designed to solve this exact problem. It is a robust, browser-based utility that instantly scans your text, identifies repeated entries, and scrubs them away, leaving you with a clean, unique list. It sounds simple, but the impact on your productivity can be massive.
+                </p>
+
+                <h3>Why Duplicate Lines are a Problem</h3>
+                <p>
+                    You might wonder, "Why does it matter if a line appears twice?" In many scenarios, duplicates are harmless, but in professional environments, they can be disastrous.
+                </p>
+                <ul>
+                    <li><strong>Email Marketing:</strong> Sending the same newsletter to the same person twice looks unprofessional and increases the likelihood of them marking you as spam. It also skews your analytics.</li>
+                    <li><strong>Database Management:</strong> "Dirty data" is a nightmare for SQL databases. Duplicate records bloat your storage, slow down queries, and can cause unique constraint violations during imports.</li>
+                    <li><strong>Programming & Logs:</strong> When debugging, developers often look at error logs. If an error prints 1,000 times, it is hard to see what else is going on. Reducing it to unique lines helps isolate the issue.</li>
+                    <li><strong>SEO & Keywords:</strong> When compiling keyword lists for a campaign, you might combine data from three different tools. Deduplication ensures you aren't bidding on the same keyword twice or analyzing the same data point repeatedly.</li>
+                </ul>
+
+                <h2>How the Tool Baba Deduplicator Works</h2>
+                <p>
+                    We built this tool with a focus on speed and accuracy. Unlike manual checking, which is prone to human error, our algorithm uses advanced set-based logic to filter text.
+                </p>
+                <h3>The Logic Behind the Clean</h3>
+                <p>
+                    When you paste your text and click the button, the tool performs the following steps in milliseconds:
+                </p>
+                <p>
+                    1. <strong>Splitting:</strong> It breaks your text block into individual lines based on line breaks.<br>
+                    2. <strong>Normalization:</strong> Depending on your settings, it checks if "Apple" and "apple" should be treated as the same thing (Case Sensitivity) or if empty lines should be ignored.<br>
+                    3. <strong>Filtering:</strong> It creates a new list and only adds a line if it hasn't been seen before. This method guarantees that the <strong>original order is preserved</strong>. Many other tools sort the list alphabetically to find duplicates, which destroys your original structure. Tool Baba keeps your list in the order you need it.<br>
+                    4. <strong>Reassembling:</strong> The unique lines are joined back together and displayed ready for copying.
+                </p>
+
+                <h2>Real-World Use Cases</h2>
+                <h3>1. Cleaning Email Lists</h3>
+                <p>
+                    Imagine you have three CSV files of customers from different events. You copy the email columns from all three and paste them into Tool Baba. Within seconds, you have a "Master List" with no repeated contacts, ready for your marketing campaign.
+                </p>
+
+                <h3>2. Developer Log Analysis</h3>
+                <p>
+                    Server logs can generate thousands of lines of text per minute. If a specific error is looping, your log file might be 99% the same line repeated. By pasting a chunk of the log here, you can strip away the noise and see the unique events that actually occurred on your server.
+                </p>
+
+                <h3>3. Social Media Winners</h3>
+                <p>
+                    If you run a contest on Instagram or YouTube where users comment to enter, some users might comment ten times to increase their chances. To be fair, you want one entry per person. You can export the comments, run them through our tool to remove duplicate usernames, and pick a fair winner.
+                </p>
+
+                <h3>4. consolidating Inventory</h3>
+                <p>
+                    Retail managers often merge inventory lists from different departments. "Blue Shirt - Size M" might appear on the warehouse list and the store floor list. Deduplicating ensures you get a list of unique product types without redundancy.
+                </p>
+
+                <h2>Privacy: Why Client-Side Matters</h2>
+                <p>
+                    Data privacy is a major concern when using online tools. If you are cleaning a list of customer emails or proprietary code, you do not want that data sent to a random server in the cloud.
+                </p>
+                <p>
+                    <strong>Tool Baba is 100% Client-Side.</strong> This means the JavaScript code that removes the duplicates runs directly on your device (laptop, phone, or tablet). Your data never leaves your browser. We do not store, view, or transmit your text. You can even load the page, disconnect your Wi-Fi, and the tool will still work perfectly. This architecture ensures maximum security for your sensitive data.
+                </p>
+
+                <h3>Tips for Best Results</h3>
+                <p>
+                    - <strong>Trimming:</strong> Sometimes a line has a hidden space at the end. To a computer, "Word" and "Word " are different. Our tool automatically handles basic whitespace, but always ensure your source data is relatively clean.<br>
+                    - <strong>Case Sensitivity:</strong> Be careful with names. "john doe" and "John Doe" are technically different strings. If you want them to be treated as unique, ensure Case Sensitive is ON. If you want to merge them, keep it OFF (though you may need to convert text case first using our Text Case Converter).
+                </p>
+                <p>
+                    Tool Baba is dedicated to making your digital life easier. We believe that simple, powerful utilities should be free and accessible to everyone. Bookmark this page for your next data cleaning task!
+                </p>
+            </article>
+        </section>
+
+        <div class="toast" id="toast">List cleaned and copied to clipboard!</div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const textInput = document.getElementById('textInput');
+        const lineCountSpan = document.getElementById('lineCount');
+        const dupCountSpan = document.getElementById('dupCount');
+        const trimOption = document.getElementById('trimOption');
+        const caseOption = document.getElementById('caseOption');
+        const toast = document.getElementById('toast');
+
+        // Update basic line count on input
+        textInput.addEventListener('input', () => {
+            const text = textInput.value;
+            const lines = text.split(/\n/);
+            // Don't count the last line if it's empty and the only one
+            const count = (text === '') ? 0 : lines.length;
+            lineCountSpan.innerText = count;
+            dupCountSpan.innerText = '0'; // Reset dup count on edit
+        });
+
+        function removeDuplicates() {
+            const rawText = textInput.value;
+            if(!rawText) return;
+
+            const lines = rawText.split(/\n/);
+            const uniqueLines = [];
+            const seen = new Set();
+            let duplicatesFound = 0;
+
+            const ignoreEmpty = trimOption.checked;
+            const isCaseSensitive = caseOption.checked;
+
+            lines.forEach(line => {
+                // If ignoreEmpty is on, skip empty lines
+                if (ignoreEmpty && line.trim() === '') {
+                    return; 
+                }
+
+                // Create a 'key' for comparison
+                let comparisonKey = line;
+                if (!isCaseSensitive) {
+                    comparisonKey = line.toLowerCase();
+                }
+                if (ignoreEmpty) {
+                    comparisonKey = comparisonKey.trim();
+                }
+
+                if (seen.has(comparisonKey)) {
+                    duplicatesFound++;
+                } else {
+                    seen.add(comparisonKey);
+                    // Add the ORIGINAL line to result (preserving case/spacing of first occurrence)
+                    uniqueLines.push(line); 
+                }
+            });
+
+            textInput.value = uniqueLines.join('\n');
+            
+            // Update Stats
+            lineCountSpan.innerText = uniqueLines.length;
+            dupCountSpan.innerText = duplicatesFound;
+
+            showToast("Duplicates removed successfully!");
+        }
+
+        function clearText() {
+            textInput.value = '';
+            lineCountSpan.innerText = '0';
+            dupCountSpan.innerText = '0';
+            textInput.focus();
+        }
+
+        function copyText() {
+            if (textInput.value.trim() === '') return;
+            textInput.select();
+            navigator.clipboard.writeText(textInput.value).then(() => {
+                showToast("Text copied to clipboard!");
+            });
+        }
+
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+  </html>
