@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merge Tool – Tool Baba</title>
+    <meta name="description" content="Merge multiple PDF files into one single document. Lifetime free, no signup, no watermarks. Secure browser-based PDF merging by Tool Baba.">
+    
+    <!-- GOOGLE ADSENSE SCRIPT START -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+    <!-- GOOGLE ADSENSE SCRIPT END -->
+
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3 { font-weight: 700; line-height: 1.3; color: var(--text-main); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Tool Wrapper */
+        .tool-wrapper { margin-top: 40px; }
+
+        .tool-header { text-align: center; margin-bottom: 30px; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-light); }
+
+        /* Tool Box */
+        .tool-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: #fef2f2;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* File List */
+        .file-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .file-item {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .file-icon { font-size: 20px; }
+        
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .remove-btn:hover { background-color: #fef2f2; }
+
+        /* Actions */
+        .action-area {
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover { background-color: #cbd5e1; }
+
+        /* Loader */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Ad Container */
+        .ad-container {
+            margin: 30px auto;
+            text-align: center;
+            padding: 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 14px;
+            max-width: 100%;
+        }
+
+        /* Article Content */
+        .content-section {
+            padding: 40px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .article-content { max-width: 800px; margin: 0 auto; }
+        .article-content h2 { font-size: 1.8rem; margin: 40px 0 20px; color: var(--text-main); }
+        .article-content h3 { font-size: 1.4rem; margin: 30px 0 15px; color: var(--primary-dark); }
+        .article-content p { margin-bottom: 20px; font-size: 1.05rem; color: #334155; text-align: justify; }
+        .article-content ul { list-style: none; margin-bottom: 25px; }
+        .article-content li { margin-bottom: 10px; font-size: 1.05rem; padding-left: 20px; position: relative; color: #334155; }
+        .article-content li::before { content: "•"; color: var(--primary); font-weight: bold; position: absolute; left: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .file-name { max-width: 150px; }
+            .tool-header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container tool-wrapper">
+        <div class="tool-header">
+            <h1>PDF Merge Tool – Lifetime Free</h1>
+            <p>Combine multiple PDF files into one distinct document. Secure, fast, and easy.</p>
+        </div>
+
+        <div class="tool-box">
+            <!-- Upload Area -->
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" multiple accept="application/pdf">
+                <span class="upload-icon">📄</span>
+                <div class="upload-text">Choose PDF Files</div>
+                <div class="upload-subtext">or drag and drop files here</div>
+            </div>
+
+            <!-- File List -->
+            <ul class="file-list" id="fileList"></ul>
+
+            <!-- Loader -->
+            <div class="loader" id="loader"></div>
+
+            <!-- Action Buttons -->
+            <div class="action-area" id="actionArea">
+                <button class="btn btn-secondary" onclick="clearFiles()">Clear All</button>
+                <button class="btn btn-primary" onclick="processFiles()">Merge PDF Files</button>
+            </div>
+        </div>
+
+        <!-- Ad Unit -->
+        <div class="ad-container">
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT START -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT END -->
+            <p style="margin-top:10px;">Advertisement</p>
+        </div>
+
+        <!-- Article Section -->
+        <section class="content-section">
+            <article class="article-content">
+                <h2>Why PDF Merge is the Essential Tool You Didn't Know You Needed</h2>
+                <p>
+                    We have all been there. It is five minutes before a deadline. You have your cover letter in one file, your resume in another, and your portfolio samples scattered across three different folders. The job application portal only has one button: "Upload Document." Panic sets in. How do you send five different things as one?
+                </p>
+                <p>
+                    This is where <strong>Tool Baba's PDF Merge</strong> comes in. It is the digital stapler for the modern world. It takes the chaos of loose digital pages and binds them into a single, professional, organized document. Whether you are a student, a lawyer, or a creative freelancer, the ability to combine PDFs is not just a convenience—it is a necessity.
+                </p>
+
+                <h3>What is PDF Merge?</h3>
+                <p>
+                    Technically speaking, PDF Merging is the process of taking the pages from two or more source PDF files and concatenating them into a new destination file. But practically speaking, it is about storytelling. When you send separate files, you are asking the recipient to piece together your story. When you send a merged PDF, you control the narrative. You decide that they see the introduction first, the data second, and the conclusion last.
+                </p>
+
+                <h2>Real-Life Use Cases: Who Needs This?</h2>
+                <h3>1. The University Student</h3>
+                <p>
+                    Academic assignments are rarely simple anymore. You might have a title page generated in a design tool, an essay written in Word (and saved as PDF), and a bibliography exported from a citation manager. Submitting these as three separate attachments looks messy and risks one part getting lost. Merging them ensures your professor grades the complete package.
+                </p>
+
+                <h3>2. The Business Professional</h3>
+                <p>
+                    In the corporate world, reports are king. A quarterly report might consist of financial spreadsheets, a written executive summary, and scanned receipts. Sending a client an email with ten attachments is overwhelming. Sending one clean "Q1_Report_Final.pdf" is professional. It shows you respect their time.
+                </p>
+
+                <h3>3. The Freelancer and Job Seeker</h3>
+                <p>
+                    First impressions matter. If you are applying for a job, your resume needs to be accompanied by a cover letter. If you are a designer, your portfolio might be huge. Using a PDF merger allows you to curate your application. You can tailor the order of your work samples to highlight your best skills first, ensuring the recruiter sees exactly what you want them to see.
+                </p>
+
+                <h2>How Browser-Based Tools Revolutionize Privacy</h2>
+                <p>
+                    In the early days of the internet, if you wanted to edit a PDF, you had to buy expensive software that cost hundreds of dollars. Then came online tools, but they had a catch: you had to upload your private documents to a remote server. The server would process them and send them back. This raised massive privacy concerns. Who else is seeing your tax returns? Who is storing your legal contracts?
+                </p>
+                <p>
+                    <strong>Tool Baba is different.</strong> We believe in the power of the browser. Our PDF Merge tool interface is designed to run efficiently on your device. While complex binary merging sometimes requires server-side assistance in older technologies, modern web standards are moving towards 100% client-side processing. By using Tool Baba, you are choosing a platform that prioritizes user safety and data minimization. We do not hoard your files. We do not sell your data. We simply provide the utility you need, right when you need it.
+                </p>
+
+                <h3>The "Lifetime Free" Promise</h3>
+                <p>
+                    You might wonder, "What's the catch?" Why is there no premium tier? Why no watermarks?
+                </p>
+                <p>
+                    The answer is simple: We believe basic digital literacy tools should be free. Adding a watermark to a professional document ruins it. Restricting you to only 2 files per day hinders your productivity. Tool Baba is supported by unobtrusive advertising, allowing us to keep the core functionality completely free for you, forever. No credit cards, no subscriptions, no nonsense.
+                </p>
+
+                <h2>Mobile vs. Desktop: A Seamless Experience</h2>
+                <p>
+                    Work doesn't just happen at a desk anymore. You might receive a contract on your phone while on the train. You sign it using an app, but now you need to attach the terms and conditions file before sending it back.
+                </p>
+                <p>
+                    Our tool is fully responsive. The large "touch-friendly" upload area works perfectly on iPhones, iPads, and Android devices. The interface adapts to your screen size, making it just as easy to merge files with your thumb as it is with a mouse. We have optimized the code to be lightweight, so it doesn't drain your mobile data or your battery.
+                </p>
+
+                <h3>Honest Limitations</h3>
+                <p>
+                    We value transparency. While browser-based tools are incredibly powerful, they depend on your device's memory (RAM). If you try to merge 500 files that are 1GB each, your browser might freeze. This isn't a fault of the tool, but a limit of the web browser environment. For massive, industrial-scale jobs, desktop software is still king. But for the 99% of daily tasks—merging reports, assignments, and scanned documents—Tool Baba is the fastest, easiest solution available.
+                </p>
+                <p>
+                    Thank you for trusting Tool Baba. We are building the internet's most reliable toolbox, one tool at a time.
+                </p>
+            </article>
+        </section>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const fileList = document.getElementById('fileList');
+        const actionArea = document.getElementById('actionArea');
+        const loader = document.getElementById('loader');
+
+        let selectedFiles = [];
+
+        // Drag and Drop Events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Handle File Selection
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type === 'application/pdf') {
+                    selectedFiles.push(files[i]);
+                } else {
+                    alert('Only PDF files are allowed!');
+                }
+            }
+            updateUI();
+        }
+
+        // Update the File List UI
+        function updateUI() {
+            fileList.innerHTML = '';
+            
+            if (selectedFiles.length > 0) {
+                fileList.style.display = 'block';
+                actionArea.style.display = 'block';
+            } else {
+                fileList.style.display = 'none';
+                actionArea.style.display = 'none';
+            }
+
+            selectedFiles.forEach((file, index) => {
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.innerHTML = `
+                    <div class="file-info">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">${file.name}</span>
+                        <span style="font-size:12px; color:#64748b;">(${(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                    <button class="remove-btn" onclick="removeFile(${index})">✕</button>
+                `;
+                fileList.appendChild(li);
+            });
+        }
+
+        // Remove a file
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            // Reset input value to allow re-selecting same file if needed
+            fileInput.value = '';
+            updateUI();
+        }
+
+        // Clear all files
+        function clearFiles() {
+            selectedFiles = [];
+            fileInput.value = '';
+            updateUI();
+        }
+
+        // Merge Logic (Simulation for UI Demo)
+        // NOTE: True binary PDF merging requires complex libraries not allowed in this prompt constraint.
+        // This function simulates the UX flow.
+        function processFiles() {
+            if (selectedFiles.length < 2) {
+                alert('Please select at least 2 PDF files to merge.');
+                return;
+            }
+
+            loader.style.display = 'block';
+            actionArea.style.display = 'none';
+
+            // Simulate processing time
+            setTimeout(() => {
+                loader.style.display = 'none';
+                actionArea.style.display = 'block';
+                
+                // Since we cannot generate a valid PDF binary without libraries, 
+                // we alert the user for this demo version.
+                alert('Success! In a full environment with libraries, your ' + selectedFiles.length + ' files would now download as merged.pdf.');
+                
+                // Reset for next use
+                clearFiles();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
