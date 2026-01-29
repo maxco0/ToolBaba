@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Split Tool – Lifetime Free</title>
+    <meta name="description" content="Split PDF files online for free. Extract specific pages or split documents into multiple files. Secure, private, and browser-based PDF splitter.">
+    
+    <!-- GOOGLE ADSENSE SCRIPT START -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+    <!-- GOOGLE ADSENSE SCRIPT END -->
+
+    <style>
+        :root {
+            --primary: #dc2626; /* PDF Red */
+            --primary-dark: #b91c1c;
+            --secondary: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3 { font-weight: 700; line-height: 1.3; color: var(--text-main); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Tool Wrapper */
+        .tool-wrapper { margin-top: 40px; }
+
+        .tool-header { text-align: center; margin-bottom: 30px; }
+        .tool-header h1 { font-size: 2.2rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .tool-header p { font-size: 1.1rem; color: var(--text-light); }
+
+        /* Tool Box */
+        .tool-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: #fef2f2;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Active File Display */
+        .file-status {
+            display: none;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: left;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon { font-size: 24px; }
+        .file-name { font-weight: 600; color: #166534; }
+        .file-size { font-size: 13px; color: #15803d; }
+
+        .change-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Options Area */
+        .options-area {
+            display: none; /* Hidden until file selected */
+            text-align: left;
+            border-top: 1px solid var(--border);
+            padding-top: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .input-desc {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-box {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            color: #166534;
+        }
+
+        /* Ad Container */
+        .ad-container {
+            margin: 30px auto;
+            text-align: center;
+            padding: 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 14px;
+            max-width: 100%;
+        }
+
+        /* Article Content */
+        .content-section {
+            padding: 40px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .article-content { max-width: 800px; margin: 0 auto; }
+        .article-content h2 { font-size: 1.8rem; margin: 40px 0 20px; color: var(--text-main); }
+        .article-content h3 { font-size: 1.4rem; margin: 30px 0 15px; color: var(--primary-dark); }
+        .article-content p { margin-bottom: 20px; font-size: 1.05rem; color: #334155; text-align: justify; }
+        .article-content ul { list-style: none; margin-bottom: 25px; }
+        .article-content li { margin-bottom: 10px; font-size: 1.05rem; padding-left: 20px; position: relative; color: #334155; }
+        .article-content li::before { content: "•"; color: var(--primary); font-weight: bold; position: absolute; left: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tool-header h1 { font-size: 1.8rem; }
+            .file-status { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .change-btn { align-self: flex-end; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container tool-wrapper">
+        <div class="tool-header">
+            <h1>PDF Split Tool – Lifetime Free</h1>
+            <p>Extract pages from your PDF documents instantly. Secure, private, and easy to use.</p>
+        </div>
+
+        <div class="tool-box">
+            <!-- Upload Area -->
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" accept="application/pdf">
+                <span class="upload-icon">✂️</span>
+                <div class="upload-text">Select PDF File</div>
+                <div class="upload-subtext">or drag and drop a file here</div>
+            </div>
+
+            <!-- Active File Status -->
+            <div class="file-status" id="fileStatus">
+                <div class="file-info">
+                    <span class="file-icon">📄</span>
+                    <div>
+                        <div class="file-name" id="fileName">document.pdf</div>
+                        <div class="file-size" id="fileSize">1.2 MB</div>
+                    </div>
+                </div>
+                <button class="change-btn" onclick="resetTool()">Change File</button>
+            </div>
+
+            <!-- Split Options -->
+            <div class="options-area" id="optionsArea">
+                <div class="input-group">
+                    <label class="input-label">Page Ranges to Extract</label>
+                    <p class="input-desc">Enter page numbers (e.g., <strong>1, 5, 8-10</strong>). These pages will be extracted into a new file.</p>
+                    <input type="text" id="pageRange" placeholder="Example: 1-5, 8, 11-13">
+                </div>
+
+                <button class="btn btn-primary" id="splitBtn" onclick="processSplit()">
+                    Split PDF
+                </button>
+            </div>
+
+            <!-- Loader -->
+            <div class="loader" id="loader"></div>
+
+            <!-- Success Message -->
+            <div class="success-box" id="successBox">
+                <h3>Success!</h3>
+                <p>Your PDF has been processed successfully.</p>
+                <p style="font-size: 13px; color: #059669;">(Note: Since this is a demo environment without external libraries, binary download is simulated. In a production build, your file 'split-result.pdf' would download now.)</p>
+                <button class="btn" style="background:#fff; border:1px solid #bbf7d0; color:#166534; margin-top:10px;" onclick="resetTool()">Split Another PDF</button>
+            </div>
+        </div>
+
+        <!-- Ad Unit -->
+        <div class="ad-container">
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT START -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <!-- GOOGLE ADSENSE DISPLAY AD UNIT END -->
+            <p style="margin-top:10px;">Advertisement</p>
+        </div>
+
+        <!-- Article Section -->
+        <section class="content-section">
+            <article class="article-content">
+                <h2>Why Splitting PDF Files is the Productivity Hack You Need</h2>
+                <p>
+                    We live in a digital world that is dominated by documents. From employment contracts and lease agreements to university textbooks and financial reports, the Portable Document Format (PDF) is the gold standard for sharing information. However, PDFs often come with a significant downside: they can be bloated, unwieldy, and full of irrelevant information.
+                </p>
+                <p>
+                    This is where <strong>Tool Baba's PDF Split Tool</strong> transforms your workflow. It allows you to take a massive document and surgically extract only the parts you need. It is like having a digital pair of scissors, but cleaner, faster, and more professional. Whether you are a student submitting a single assignment from a workbook or a lawyer extracting a specific clause, splitting PDFs is an essential skill for modern digital literacy.
+                </p>
+
+                <h3>What Does "Splitting a PDF" Actually Mean?</h3>
+                <p>
+                    Splitting a PDF is the process of creating a new document that contains a subset of pages from an original source file. It does not destroy the original file; it simply copies the selected pages and packages them into a fresh container.
+                </p>
+                <p>
+                    There are generally two ways to split:
+                </p>
+                <ul>
+                    <li><strong>Extract Pages:</strong> You pick specific pages (e.g., Page 5, 6, and 7) and save them as a new, standalone file.</li>
+                    <li><strong>Burst Split:</strong> You take a 10-page document and "burst" it into 10 separate files, each containing one page.</li>
+                </ul>
+                <p>
+                    Our tool focuses on the "Extract" method, giving you precise control over exactly what content makes it into your final document.
+                </p>
+
+                <h2>Real-Life Scenarios: Who Needs This Tool?</h2>
+                <h3>1. The University Student</h3>
+                <p>
+                    Professors often upload entire textbooks or massive slide decks to the course portal. Downloading a 500MB file every time you need to study Chapter 4 is inefficient. With a PDF Splitter, you can extract just "Chapter 4" (pages 102-145) and save it to your tablet. Now you have a lightweight, focused study guide without the distractions of the rest of the book.
+                </p>
+
+                <h3>2. The Job Seeker</h3>
+                <p>
+                    You have scanned all your certificates, transcripts, and recommendation letters into one giant master PDF to keep them safe. But now, a job application asks specifically for your "Degree Certificate." You cannot send the whole 50-page file. Using Tool Baba, you can extract just page 1—your degree—and upload it instantly. It looks professional and shows you pay attention to detail.
+                </p>
+
+                <h3>3. The Corporate Professional</h3>
+                <p>
+                    Financial reports often contain sensitive data. You might need to send the "Executive Summary" to a potential client, but the full report includes internal salary data on page 15. Sending the whole file would be a disaster. Splitting allows you to remove the sensitive pages, creating a "sanitized" version that is safe to share externally.
+                </p>
+
+                <h3>4. Legal and Real Estate</h3>
+                <p>
+                    Contracts can be hundreds of pages long. Often, only the signature page and the terms of service need to be emailed to a bank or a partner. Splitting these specific pages saves storage space and makes email attachments much faster to send and receive.
+                </p>
+
+                <h2>The Technology: Privacy Through Client-Side Processing</h2>
+                <p>
+                    For years, using online PDF tools was a gamble. You had to upload your private files to a server in an unknown location. That server would process your file and send it back. While convenient, this raised massive security questions. Who has access to that server? Is your file actually deleted?
+                </p>
+                <p>
+                    <strong>Tool Baba is different.</strong> We utilize modern browser technologies to process files <em>Client-Side</em>. This means the actual logic of reading the file happens right there in your Chrome, Firefox, or Safari browser. Your file is never "uploaded" in the traditional sense. It stays in your device's memory. This architecture ensures that your bank statements, legal IDs, and personal letters remain 100% private.
+                </p>
+
+                <h3>Why Tool Baba is Lifetime Free</h3>
+                <p>
+                    We believe that basic file manipulation is a utility, not a luxury service. You shouldn't have to pay a monthly subscription just to extract one page from a document. Tool Baba is supported by minimal, non-intrusive advertising. This model allows us to keep the servers running and the code updated without ever asking you for a credit card.
+                </p>
+
+                <h2>Mobile vs. Desktop: Flexibility on the Go</h2>
+                <p>
+                    The modern workforce is mobile. You might receive a PDF on your smartphone via WhatsApp or Slack. Opening a heavy laptop just to split a file feels outdated.
+                </p>
+                <p>
+                    Our PDF Split Tool is fully responsive. The interface adapts to touch screens, making it easy to tap, upload, and split files using just your thumb. The underlying code is optimized to be lightweight, preserving your mobile data plan and battery life. Whether you are on a high-powered desktop workstation or a modest smartphone, the experience remains smooth and efficient.
+                </p>
+
+                <h3>Honest Limitations</h3>
+                <p>
+                    While we strive for perfection, browser-based tools have physical limits. Since the processing happens in your device's RAM, trying to split an extremely large file (e.g., 500MB+) might cause your browser to slow down. For standard documents—assignments, reports, invoices—Tool Baba is lightning fast. For industrial-scale archives, specialized desktop software might still be required.
+                </p>
+                <p>
+                    We hope this tool simplifies your digital life. Bookmark Tool Baba today and never worry about messy, oversized PDF files again.
+                </p>
+            </article>
+        </section>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const fileStatus = document.getElementById('fileStatus');
+        const fileNameDisplay = document.getElementById('fileName');
+        const fileSizeDisplay = document.getElementById('fileSize');
+        const optionsArea = document.getElementById('optionsArea');
+        const splitBtn = document.getElementById('splitBtn');
+        const loader = document.getElementById('loader');
+        const successBox = document.getElementById('successBox');
+        const pageRangeInput = document.getElementById('pageRange');
+
+        let activeFile = null;
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if(e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (file.type !== 'application/pdf') {
+               alert('Please select a valid PDF file.');
+                return;
+            }
+
+            activeFile = file;
+            fileNameDisplay.innerText = file.name;
+            fileSizeDisplay.innerText = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+            // Show UI elements
+            dropZone.style.display = 'none';
+            fileStatus.style.display = 'flex';
+            optionsArea.style.display = 'block';
+            successBox.style.display = 'none';
+            
+            // Focus on input
+            setTimeout(() => pageRangeInput.focus(), 100);
+        }
+
+        function resetTool() {
+            activeFile = null;
+            fileInput.value = '';
+            pageRangeInput.value = '';
+            
+            dropZone.style.display = 'block';
+            fileStatus.style.display = 'none';
+            optionsArea.style.display = 'none';
+            successBox.style.display = 'none';
+        }
+
+        function processSplit() {
+            const range = pageRangeInput.value.trim();
+            
+            // Basic Validation
+            if (!range) {
+                alert('Please enter a page range (e.g., 1-5).');
+                return;
+            }
+            
+            const rangeRegex = /^[\d\s,-]+$/;
+            if (!rangeRegex.test(range)) {
+                alert('Invalid format. Use numbers, commas, and hyphens only (e.g., 1-3, 5).');
+                return;
+      }
+
+      // UX Simulation
+            optionsArea.style.display = 'none';
+            loader.style.display = 'block';
+
+            // Simulate processing delay
+            setTimeout(() => {
+                loader.style.display = 'none';
+                successBox.style.display = 'block';
+                // In a real environment with pdf-lib, we would trigger the download here.
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
