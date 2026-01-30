@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF Tool – Lifetime Free</title>
+    <meta name="description" content="Convert your images to PDF documents securely in your browser. Lifetime free tool, no uploads, instant download.">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Tool Section */
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* Input Area */
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            background: #eff6ff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            background: #dbeafe;
+        }
+
+        .upload-area input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Settings Grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Preview Section */
+        .preview-container {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+
+        .image-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .card-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .control-btn {
+            background: #f3f4f6;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .control-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .control-btn.delete {
+            color: #ef4444;
+        }
+
+        .control-btn.delete:hover {
+            background: #fee2e2;
+        }
+
+        /* Action Buttons */
+        .action-area {
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            margin-top: 1rem;
+            font-weight: 600;
+            min-height: 24px;
+        }
+
+        .status-success {
+            color: #10b981;
+        }
+
+        .status-error {
+            color: #ef4444;
+        }
+
+        .download-btn {
+            background-color: #10b981;
+            margin-top: 1rem;
+            display: none; /* Hidden by default */
+        }
+
+        .download-btn:hover {
+            background-color: #059669;
+        }
+
+        /* Article Section */
+        .article-section {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 3rem;
+            color: #374151;
+        }
+
+        .article-section h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #111827;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 0.5rem;
+        }
+
+        .article-section h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .article-section h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #1f2937;
+        }
+
+        .article-section p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .article-section ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .article-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-card, .article-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- TOOL INTERFACE -->
+        <main class="tool-card">
+            <h1>Image to PDF Tool – Lifetime Free</h1>
+            
+            <div class="upload-area">
+                <div class="upload-icon">📂</div>
+                <div class="upload-text">Click to select images or Drag & Drop here</div>
+                <input type="file" id="imageInput" accept="image/*" multiple>
+            </div>
+
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label for="pageSize">Page Size</label>
+                    <select id="pageSize" class="form-select">
+                        <option value="a4">A4 (210 x 297 mm)</option>
+                        <option value="letter">Letter (8.5 x 11 in)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="orientation">Orientation</label>
+                    <select id="orientation" class="form-select">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="previewContainer" class="preview-container">
+                <!-- Thumbnails will appear here -->
+            </div>
+
+            <div class="action-area">
+                <button id="convertBtn" class="btn">Convert to PDF</button>
+                <div id="statusMessage" class="status-msg"></div>
+                <a id="downloadBtn" class="btn download-btn">Download PDF</a>
+            </div>
+        </main>
+
+        <!-- LONG ARTICLE SECTION -->
+        <article class="article-section">
+            <h2>Understanding the Need for Image to PDF Conversion</h2>
+            <p>
+                In today's fast-paced digital environment, managing documents efficiently is not just a convenience—it is a necessity. We often find ourselves capturing information through the lens of a camera or a smartphone screenshot. While these images serve the immediate purpose of capturing data, they are rarely suitable for professional sharing, archiving, or submitting as formal documentation. This is where an Image to PDF converter becomes an essential utility in your digital toolkit.
+            </p>
+            <p>
+                The Portable Document Format (PDF) is the global standard for document exchange. Unlike image files (such as JPG or PNG), which can behave differently depending on the device or software viewing them, a PDF ensures that your document looks exactly the same on a smartphone, a tablet, or a desktop computer. By converting your images into a single, cohesive PDF file, you elevate a scattered collection of pictures into a professional document.
+            </p>
+
+            <h2>Why Convert Images to PDF?</h2>
+            <p>
+                There are countless scenarios where sending raw image files is inappropriate or cumbersome. Converting them to PDF offers several distinct advantages that improve workflow and presentation.
+            </p>
+
+            <h3>1. Standardization and Compatibility</h3>
+            <p>
+                Images come in various aspect ratios and resolutions. When you send five different email attachments of photos taken at different angles, the recipient has to open each one individually. A PDF standardizes these images into uniform pages. Whether you choose A4 or Letter size, the PDF container ensures your content is presented in a structured, readable format that is compatible with virtually every operating system without requiring specialized photo viewing software.
+            </p>
+
+            <h3>2. File Consolidation</h3>
+            <p>
+                Imagine you are a student submitting an assignment that consists of ten handwritten pages. Uploading ten separate JPEG files to a learning portal is often not allowed, and emailing them creates clutter. By using this tool, you can merge all ten images into a single file. This not only makes the file easier to handle but also ensures that the pages remain in the correct order, preventing confusion for the person reviewing your work.
+            </p>
+
+            <h3>3. Professional Presentation</h3>
+            <p>
+                For freelancers and business professionals, perception is everything. Sending a client a photo of a receipt or a contract taken on a table looks messy. Converting that same image into a PDF with clean margins instantly makes the document look scanned and professional. It implies effort and organization, qualities that are highly valued in the business world.
+            </p>
+
+            <h2>Real-Life Use Cases</h2>
+            <p>
+                This tool is designed to be versatile, catering to a wide range of users across different sectors. Here are some of the most common ways people utilize our Image to PDF converter:
+            </p>
+            <ul>
+                <li><strong>Students:</strong> Quickly snapping photos of whiteboard notes, textbooks, or handwritten homework and converting them into a single study guide or submission file.</li>
+                <li><strong>Job Seekers:</strong> Many application portals require a single file upload. If your portfolio, ID, and certificates are separate images, this tool combines them into one seamless application packet.</li>
+                <li><strong>Administrative Work:</strong> converting photos of receipts for expense reports. Instead of keeping a shoebox of thermal paper receipts that fade over time, digital copies in PDF format serve as a durable archive for tax purposes.</li>
+                <li><strong>Legal & Real Estate:</strong> Scanning signed documents using a phone camera and converting them to PDF to email back to agents or lawyers immediately.</li>
+            </ul>
+
+            <h2>How This Browser-Based Tool Works</h2>
+            <p>
+                You might be wondering how this conversion happens without uploading your files to a server. This is the beauty of modern web technology. Our tool operates entirely "client-side."
+            </p>
+            <p>
+                When you select images, the browser reads the file data into its local memory. Using HTML5 Canvas technology, the tool draws your image onto a virtual page, resizing it to fit your selected paper size (like A4). It then encodes this visual data into the PDF standard structure.
+            </p>
+            <p>
+                Because everything happens inside your browser (Chrome, Firefox, Safari, or Edge), the process is incredibly fast. You aren't waiting for a large file to upload to a remote server, process, and then download again. It happens instantly on your device.
+            </p>
+
+            <h2>Privacy and Security Benefits</h2>
+            <p>
+                Privacy is a major concern when using free online tools. Many websites ask you to upload your sensitive documents (like passports, bank statements, or contracts) to their cloud servers to be processed. While many are secure, there is always a risk when data leaves your computer.
+            </p>
+            <p>
+                <strong>This tool is different.</strong> Since it runs entirely in your browser using JavaScript, your images <em>never</em> leave your device. There is no server involved in the conversion process. You could technically disconnect your internet after loading the page, and the tool would still work perfectly. This architecture ensures 100% privacy for your personal documents.
+            </p>
+
+            <h2>Understanding Page Settings: A4 vs. Letter</h2>
+            <p>
+                We provide options for page size and orientation to ensure your output matches your printing needs.
+            </p>
+            <h3>A4 Size</h3>
+            <p>
+                A4 (210mm x 297mm) is the international standard paper size used in most countries across Europe, Asia, and South America. If you plan to print your document or if you are submitting to an international organization, A4 is likely the correct choice.
+            </p>
+            <h3>Letter Size</h3>
+            <p>
+                Letter (8.5 inches x 11 inches) is the standard paper size in North America (USA, Canada). If you are creating documents for US-based schools or businesses, Letter size will ensure that your document prints correctly on standard office printers without scaling issues.
+            </p>
+
+            <h2>Honest Limitations</h2>
+            <p>
+                We believe in transparency. While this browser-based tool is powerful, it does have limitations compared to paid desktop software like Adobe Acrobat:
+            </p>
+            <ul>
+                <li><strong>No OCR (Optical Character Recognition):</strong> This tool places the image onto a PDF page. It does not convert the text inside the image into selectable or searchable text. The output is essentially a "picture of a document" inside a PDF wrapper.</li>
+                <li><strong>File Size:</strong> To keep the tool fast and compatible, we do not apply aggressive compression algorithms. If you upload ten very high-resolution photos (e.g., 10MB each), the resulting PDF will be quite large. For most standard web use, this is fine, but for strict email attachment limits, keep an eye on your input image sizes.</li>
+                <li><strong>Editing:</strong> Once the PDF is created, you cannot edit the text or move elements around within the PDF. It is a final output format.</li>
+            </ul>
+
+            <h2>Why We Offer This Tool for Free</h2>
+            <p>
+                We believe that basic digital utilities should be accessible to everyone. Students shouldn't have to pay a subscription just to submit homework, and freelancers shouldn't need expensive software to invoice a client. By building this tool using efficient client-side code, our hosting costs are minimal, allowing us to offer this service as a lifetime free utility without aggressive ads or paywalls.
+            </p>
+            <p>
+                Whether you are on a mobile phone waiting for a train or on a desktop in a corporate office, this tool provides a reliable, secure, and fast way to bridge the gap between image files and professional PDF documents.
+            </p>
+        </article>
+    </div>
+
+    <script>
+        // --- LOGIC SECTION ---
+        
+        // State management
+        const state = {
+            images: [], // Stores objects: { id, file, dataUrl }
+            settings: {
+                pageSize: 'a4',
+                orientation: 'portrait'
+            }
+        };
+
+        // DOM Elements
+        const fileInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const pageSizeSelect = document.getElementById('pageSize');
+        const orientationSelect = document.getElementById('orientation');
+
+        // Event Listeners
+        fileInput.addEventListener('change', handleFileSelect);
+        pageSizeSelect.addEventListener('change', (e) => state.settings.pageSize = e.target.value);
+        orientationSelect.addEventListener('change', (e) => state.settings.orientation = e.target.value);
+        convertBtn.addEventListener('click', generatePDF);
+
+        // Helper to generate unique IDs
+        const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        // Handle File Selection
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            // Reset status
+            statusMessage.textContent = '';
+            statusMessage.className = 'status-msg';
+            downloadBtn.style.display = 'none';
+
+            let processedCount = 0;
+
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageObj = {
+                        id: uid(),
+                        file: file,
+                        dataUrl: e.target.result
+                    };
+                    state.images.push(imageObj);
+                    processedCount++;
+                    
+                    if (processedCount === files.length) {
+                        renderPreviews();
+                        fileInput.value = ''; // Reset input to allow adding same file again if needed
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Render Thumbnails
+        function renderPreviews() {
+            previewContainer.innerHTML = '';
+            state.images.forEach((img, index) => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.innerHTML = `
+                    <img src="${img.dataUrl}" alt="Preview">
+                    <div class="card-controls">
+                        <button class="control-btn" onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''}>&larr;</button>
+                        <button class="control-btn delete" onclick="removeImage(${index})">X</button>
+                        <button class="control-btn" onclick="moveImage(${index}, 1)" ${index === state.images.length - 1 ? 'disabled' : ''}>&rarr;</button>
+                    </div>
+                `;
+                previewContainer.appendChild(card);
+            });
+        }
+
+        // Global functions for inline HTML events
+        window.removeImage = (index) => {
+            state.images.splice(index, 1);
+            renderPreviews();
+        };
+
+        window.moveImage = (index, direction) => {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= state.images.length) return;
+            
+            // Swap
+            const temp = state.images[index];
+            state.images[index] = state.images[newIndex];
+            state.images[newIndex] = temp;
+            
+            renderPreviews();
+        };
+
+        // --- CORE PDF GENERATION LOGIC (Native JS) ---
+        async function generatePDF() {
+            if (state.images.length === 0) {
+                showStatus("Please select at least one image.", "error");
+                return;
+          }
+          convertBtn.disabled = true;
+            convertBtn.textContent = "Processing...";
+            showStatus("Generating PDF pages...", "success");
+
+            try {
+                // PDF Constants (Points per inch = 72)
+                const sizes = {
+                    a4: { w: 595.28, h: 841.89 },
+                    letter: { w: 612, h: 792 }
+                };
+
+                let pageW = sizes[state.settings.pageSize].w;
+                let pageH = sizes[state.settings.pageSize].h;
+
+                if (state.settings.orientation === 'landscape') {
+                    [pageW, pageH] = [pageH, pageW];
+                }
+
+                // Initialize PDF Parts
+                const objects = [];
+                const kids = []; // Array of Page Object References
+                
+                // Helper to add object and return its ID
+                let objCounter = 1;
+                function addObj(content) {
+                    objects.push(`${objCounter} 0 obj\n${content}\nendobj`);
+                    return objCounter++;
+                }
+
+                // 1. Process Images to JPEGs for PDF Embedding
+                const processedImages = await Promise.all(state.images.map(img => processImageForPdf(img.dataUrl)));
+
+                // 2. Build PDF Objects
+                
+                // Catalog and Pages Root placeholders (we fill references later)
+                const catalogId = 1; 
+                const pagesRootId = 2;
+                objCounter = 3; // Start actual content from 3
+
+                processedImages.forEach(imgData => {
+                    // Calculate Fit
+                    const margin = 40;
+                    const availW = pageW - (margin * 2);
+                    const availH = pageH - (margin * 2);
+                    
+                    let drawW = imgData.width;
+                    let drawH = imgData.height;
+                    const ratio = drawW / drawH;
+
+                    if (drawW > availW) {
+                        drawW = availW;
+                        drawH = drawW / ratio;
+                    }
+                    if (drawH > availH) {
+                        drawH = availH;
+                        drawW = drawH * ratio;
+                    }
+
+                    const x = (pageW - drawW) / 2;
+                    const y = (pageH - drawH) / 2;
+
+                    // Image XObject
+                    const imgXObjectId = objCounter++;
+                    const imgStream = `<< /Type /XObject /Subtype /Image /Width ${imgData.width} /Height ${imgData.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgData.binary.length} >>\nstream\n${imgData.binary}\nendstream`;
+                    objects.push(`${imgXObjectId} 0 obj\n${imgStream}\nendobj`);
+
+                    // Content Stream (Placing the image)
+                    const contentStreamId = objCounter++;
+                    // PDF Coordinate system transform: Translate(x,y) Scale(w,h)
+                    const streamData = `q ${drawW.toFixed(2)} 0 0 ${drawH.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im${imgXObjectId} Do Q`;
+                    objects.push(`${contentStreamId} 0 obj\n<< /Length ${streamData.length} >>\nstream\n${streamData}\nendstream\nendobj`);
+
+                    // Page Object
+                    const pageId = objCounter++;
+                    kids.push(`${pageId} 0 R`);
+                    
+                    const pageObj = `<< /Type /Page /Parent ${pagesRootId} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im${imgXObjectId} ${imgXObjectId} 0 R >> >> /Contents ${contentStreamId} 0 R >>`;
+                    objects.push(`${pageId} 0 obj\n${pageObj}\nendobj`);
+                });
+
+                // 3. Construct Root Objects
+                // Pages Root
+                const pagesObj = `<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${kids.length} >>`;
+                
+                // 4. Assemble Final PDF String
+                let pdfBody = `%PDF-1.4\n%\xE2\xE3\xCF\xD3\n`;
+                const xrefOffsets = [];
+                
+                // Helper to track byte offset
+                function addBody(str) {
+                    xrefOffsets.push(pdfBody.length);
+                    pdfBody += str + '\n';
+                }
+
+                // Add Catalog (ID 1)
+                addBody(`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj`);
+
+                // Add Pages Root (ID 2)
+                addBody(`2 0 obj\n${pagesObj}\nendobj`);
+
+                // Add Rest
+                objects.forEach(obj => addBody(obj));
+
+                // XRef Table
+                const xrefStart = pdfBody.length;
+                let xref = `xref\n0 ${objCounter}\n0000000000 65535 f \n`;
+                xrefOffsets.forEach(offset => {
+                    xref += pad(offset, 10) + " 00000 n \n";
+                });
+
+                // Trailer
+                const trailer = `trailer\n<< /Size ${objCounter} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+
+                const finalPDF = pdfBody + xref + trailer;
+
+                // 5. Create Blob and Download Link
+                const buffer = new Uint8Array(finalPDF.length);
+                for (let i = 0; i < finalPDF.length; i++) {
+                    buffer[i] = finalPDF.charCodeAt(i) & 0xFF;
+                }
+
+                const blob = new Blob([buffer], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+
+                // Update UI
+                downloadBtn.href = url;
+                downloadBtn.download = `document_${Date.now()}.pdf`;
+                downloadBtn.style.display = 'inline-block';
+                
+                showStatus("PDF created successfully!", "success");
+
+            } catch (error) {
+                console.error(error);
+                showStatus("An error occurred during conversion.", "error");
+            } finally {
+                convertBtn.disabled = false;
+                convertBtn.textContent = "Convert to PDF";
+            }
+        }
+
+        // Helper: Convert DataURL to Binary String for PDF Embedding (JPEG only)
+        function processImageForPdf(dataUrl) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Convert to JPEG explicitly (PDF DCTDecode requires JPEG)
+                    const jpegUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    
+                    // Strip header to get base64
+                    const base64 = jpegUrl.split(',')[1];
+                    // Convert base64 to binary string
+                    const binary = atob(base64);
+
+                    resolve({
+                        width: img.width,
+                        height: img.height,
+                        binary: binary
+                    });
+                };
+                img.src = dataUrl;
+            });
+        }
+
+        function pad(num, size) {
+            let s = "000000000" + num;
+            return s.substr(s.length - size);
+        }
+
+        function showStatus(msg, type) {
+            statusMessage.textContent = msg;
+            statusMessage.className = `status-msg status-${type}`;
+        }
+    </script>
+</body>
+</html>
