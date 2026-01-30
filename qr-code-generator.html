@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator Tool – Lifetime Free & Secure</title>
+    <meta name="description" content="Generate high-quality QR codes instantly in your browser. No sign-up, no server tracking, lifetime free. Download PNG for business, Wi-Fi, and URLs.">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 40px 0;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+        }
+        
+        h2 { font-size: 1.75rem; margin-top: 2rem; margin-bottom: 1rem; color: #1f2937; }
+        h3 { font-size: 1.35rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #374151; }
+        p, li { color: #4b5563; margin-bottom: 1rem; font-size: 1.05rem; }
+        ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+
+        /* Ads */
+        .ad-placeholder {
+            background-color: #e5e7eb;
+            border: 2px dashed #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            position: relative;
+        }
+        .ad-placeholder::before { content: "ADVERTISEMENT"; position: absolute; top: 4px; right: 6px; font-size: 0.65rem; color: #9ca3af; }
+        
+        .ad-top { width: 100%; height: 100px; }
+        .ad-bottom { width: 100%; height: 120px; margin-top: 40px; }
+        .ad-left, .ad-right { width: 300px; height: 600px; flex-shrink: 0; }
+
+        /* Layout */
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .center-content {
+            flex: 1;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        /* Tool UI */
+        .tool-box {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); }
+        
+        .text-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .text-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        textarea.text-input { min-height: 100px; resize: vertical; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        input[type="color"] { border: none; width: 32px; height: 32px; background: none; cursor: pointer; }
+
+        .btn-gen {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            padding: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
+        }
+        .btn-gen:hover { background-color: var(--primary-hover); }
+
+        /* Output */
+        .output-wrapper {
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .canvas-area {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-dl {
+            display: inline-block;
+            background-color: #10b981;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-dl:hover { background-color: #059669; }
+
+        /* Article */
+        .content-article {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .ad-left, .ad-right { display: none; }
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; margin: 20px 0; }
+            .tool-box, .content-article { padding: 1.5rem; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>QR Code Generator Tool – Lifetime Free</h1>
+
+    <!-- Top Ad -->
+    <div class="ad-placeholder ad-top">Top Advertisement Banner</div>
+
+    <div class="main-layout">
+        <!-- Left Sidebar Ad -->
+        <div class="ad-placeholder ad-left">Left Sidebar Ad</div>
+
+        <div class="center-content">
+            
+            <!-- TOOL UI -->
+            <div class="tool-box">
+                <div class="input-group">
+                    <label class="input-label">Enter Content (URL, Text, Email)</label>
+                    <textarea id="qr-text" class="text-input" placeholder="https://www.example.com"></textarea>
+                </div>
+
+                <div class="options-grid input-group">
+                    <div>
+                        <label class="input-label">Foreground</label>
+                        <div class="color-input">
+                            <input type="color" id="fg-color" value="#000000">
+                            <span>Pick Color</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Background</label>
+                        <div class="color-input">
+                            <input type="color" id="bg-color" value="#ffffff">
+                            <span>Pick Color</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Size</label>
+                        <select id="qr-size" class="text-input">
+                            <option value="128">Small</option>
+                            <option value="256" selected>Medium</option>
+                            <option value="512">Large</option>
+                            <option value="1024">Extra Large</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-gen" onclick="generateQR()">Generate QR Code</button>
+
+                <div id="output-area" class="output-wrapper">
+                    <div id="canvas-container" class="canvas-area"></div>
+                    <br>
+                    <a id="download-link" class="btn-dl" href="#" download="qrcode.png">Download QR Code</a>
+                </div>
+            </div>
+
+            <!-- ARTICLE SECTION -->
+            <div class="content-article">
+                <h2>The Ultimate Guide to QR Codes: Secure, Fast, and Free</h2>
+                <p>In the rapidly evolving digital landscape, the line between the physical and virtual worlds is becoming increasingly blurred. At the forefront of this revolution is the Quick Response (QR) code. Whether you are a small business owner looking to modernize your payments, a restaurant shifting to contactless menus, or an individual sharing contact details, QR codes have become an essential tool. This page serves as both a powerful <strong>Lifetime Free QR Code Generator</strong> and a comprehensive educational resource.</p>
+
+                <h3>What Exactly is a QR Code?</h3>
+                <p>A QR Code is a two-dimensional barcode that is readable by smartphones and dedicated scanning devices. It was invented in 1994 by Denso Wave, a Japanese automotive subsidiary, to track vehicles during manufacturing. Unlike traditional barcodes that hold information horizontally (linear), QR codes store data both horizontally and vertically in a grid of black and white squares. This matrix design allows them to hold significantly more information—up to 4,296 alphanumeric characters—compared to the humble barcode.</p>
+                <p>The genius of the QR code lies in its structure. The three distinct squares located in the corners are "Position Detection Patterns." These allow your phone's camera to instantly recognize the code, determine its orientation, and scan it at high speeds, regardless of the angle.</p>
+
+                <h3>How Does This Generator Work? (Client-Side Technology)</h3>
+                <p>It is important to understand the technology behind this specific tool because it directly impacts your privacy and security. Most online QR generators function as "Server-Side" applications. This means when you type your data, it is sent to a remote server, the image is created, and then sent back to you. This creates a digital footprint of your activity.</p>
+                <p><strong>Our tool is different.</strong> We use client-side JavaScript technology. Here is the process:</p>
+                <ul>
+                    <li><strong>1. Local Processing:</strong> When you click "Generate," the browser on your specific device (phone or laptop) takes the text input.</li>
+                    <li><strong>2. Encoding:</strong> The text is converted into binary data and error correction codes are added mathematically.</li>
+                    <li><strong>3. Rendering:</strong> Your browser's HTML5 Canvas API draws the pixels directly onto your screen.</li>
+                    <li><strong>4. Privacy:</strong> Since no data is sent to the cloud, your Wi-Fi passwords, crypto addresses, or private URLs remain 100% secure on your device.</li>
+                </ul>
+
+                <h3>Dynamic vs. Static QR Codes: Why "Free" Isn't Always Free</h3>
+                <p>You may have encountered other tools offering "Dynamic QR Codes." These allow you to change the destination URL after the code is printed. While useful, they are often a trap. The company hosts a redirect link (e.g., scan.me/123) which then points to your site. If you stop paying their monthly subscription, they break the link, and your printed business cards become useless.</p>
+                <p>The tool provided on this page generates <strong>Static QR Codes</strong>. These encode your actual data directly into the pattern. They do not rely on our server or any third party. Once you download the image, it will work forever, free of charge. This makes them ideal for permanent use cases like product packaging or ID badges.</p>
+
+                <h3>Top Real-World Use Cases</h3>
+                <p>QR codes are versatile tools. Here are some of the most effective ways to utilize them:</p>
+                
+                <h4>Business & Marketing</h4>
+                <p>Direct traffic from offline to online. Place codes on flyers, posters, and billboards to link users to your landing page, social media profile, or Google Maps location. This tracks the effectiveness of your physical advertising.</p>
+
+                <h4>Contactless Networking (vCard)</h4>
+                <p>Instead of handing out paper cards that get lost, generate a QR code containing your vCard data. When scanned, it prompts the user to "Add Contact" immediately on their phone.</p>
+
+                <h4>Wi-Fi Access</h4>
+                <p>Guests often struggle with complex Wi-Fi passwords. You can create a code formatted as `WIFI:S:MyNetwork;T:WPA;P:MyPassword;;`. When guests scan this, their phone automatically joins the network without typing a single character.</p>
+
+                <h3>Best Practices for Printing</h3>
+                <p>To ensure your QR codes are scannable by all devices, follow these design rules:</p>
+                <ul>
+                    <li><strong>Contrast:</strong> Always ensure a high contrast between the foreground (code) and background. Black on White is the safest standard.</li>
+                    <li><strong>Size:</strong> Do not print them smaller than 1 inch (2.5 cm) square. If the scanning distance is far (like a billboard), the code needs to be much larger.</li>
+                    <li><strong>Quiet Zone:</strong> Keep a clear border around the code. If you place text or images too close to the QR pattern, the scanner might fail to detect the positioning markers.</li>
+                </ul>
+
+                <h3>Why Tool Baba Provides This Tool</h3>
+                <p>We believe that basic digital utilities should be accessible to everyone. In an age of subscriptions and paywalls, having a reliable, privacy-focused, and fast tool to generate standard barcodes empowers small businesses and individuals. There are no limits on how many codes you can generate. Enjoy the tool, share it with friends, and simplify your digital connections.</p>
+            </div>
+
+        </div>
+
+        <!-- Right Sidebar Ad -->
+        <div class="ad-placeholder ad-right">Right Sidebar Ad</div>
+    </div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-placeholder ad-bottom">Bottom Advertisement Banner</div>
+
+</div>
+
+<!-- LOGIC SCRIPT -->
+<script>
+    /* 
+       QRCode.js Library (Minified for Single File Portability) 
+       License: MIT 
+       Author: Davidshimjs (adapted)
+    */
+    var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData.push(b),b=[]}this.parsedData=Array.prototype.concat.apply([],this.parsedData),this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){var a=!1,b=navigator.userAgent;if(/android/i.test(b)){a=!0;var c=b.toString().match(/android ([0-9]\.[0-9])/i);c&&c[1]&&(a=parseFloat(c[1])>=4)}return a}var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return(b+c)%2==0;case e.PATTERN001:return b%2==0;case e.PATTERN010:return c%3==0;case e.PATTERN011:return(b+c)%3==0;case e.PATTERN100:return(Math.floor(b/2)+Math.floor(c/3))%2==0;case e.PATTERN101:return(b*c)%2+(b*c)%3==0;case e.PATTERN110:return(b*c%2+b*c%3)%2==0;case e.PATTERN111:return(b*c%3+(b+c)%2)%2==0;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(b>=10&&27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(b>=27&&41>=b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0==h&&0==i||g==a.isDark(d+h,e+i)&&f++);f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(e,d)&&!a.isDark(e+1,d)&&a.isDark(e+2,d)&&a.isDark(e+3,d)&&a.isDark(e+4,d)&&!a.isDark(e+5,d)&&a.isDark(e+6,d)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(e,d)&&!a.isDark(e+1,d)&&a.isDark(e+2,d)&&a.isDark(e+3,d)&&a.isDark(e+4,d)&&!a.isDark(e+5,d)&&a.isDark(e+6,d)&&(c+=40);return c}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.getLength();c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){if(this.typeNumber<1){var a=1;for(a=1;40>a;a++){for(var b=f.getRSBlocks(a,this.errorCorrectLevel),c=new k,g=0,h=0;h<b.length;h++)g+=b[h].dataCount;for(var i=0;i<this.dataList.length;i++){var j=this.dataList[i];c.put(j.mode,4),c.put(j.getLength(),f.getLengthInBits(j.mode,a)),j.write(c)}if(c.getLengthInBits()<=8*g)break}this.typeNumber=a}this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(0>a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)0>b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,c=0,d=0;8>d;d++){this.makeImpl(!0,d);var e=f.getLostPoint(this);(0==d||a>e)&&(a=e,c=d)}return c},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=a%2==0),null==this.modules[6][a]&&(this.modules[6][a]=a%2==0)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(d>>e&1);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(d>>e&1);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a,this.modules[8][8]=!1},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(a[g]>>>e&1)),f.getMask(b,d,h-i)&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.createData=function(a,c,d){for(var e=f.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var j=0,h=0;h<e.length;h++)j+=e[h].dataCount;if(g.getLengthInBits()>8*j)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*j+")");for(g.getLengthInBits()+4<=8*j&&g.put(0,4);g.getLengthInBits()%8!=0;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*j)break;if(g.put(236,8),g.getLengthInBits()>=8*j)break;g.put(17,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;k>m;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s},c.MODE_NUMBER=1,c.MODE_ALPHA_NUM=2,c.MODE_8BIT_BYTE=4,c.MODE_KANJI=8,d.L=1,d.M=0,d.Q=3,d.H=2,e.PATTERN000=0,e.PATTERN001=1,e.PATTERN010=2,e.PATTERN011=3,e.PATTERN100=4,e.PATTERN101=5,e.PATTERN110=6,e.PATTERN111=7,f.PATTERN_POSITION_TABLE=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],f.G15=1335,f.G18=7973,f.G15_MASK=21522,f.getBCHTypeInfo=function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},f.getBCHTypeNumber=function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},f.getBCHDigit=function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},f.getPatternPosition=function(a){return f.PATTERN_POSITION_TABLE[a-1]},f.getMask=function(a,b,c){switch(a){case e.PATTERN000:return(b+c)%2==0;case e.PATTERN001:return b%2==0;case e.PATTERN010:return c%3==0;case e.PATTERN011:return(b+c)%3==0;case e.PATTERN100:return(Math.floor(b/2)+Math.floor(c/3))%2==0;case e.PATTERN101:return(b*c)%2+(b*c)%3==0;case e.PATTERN110:return(b*c%2+b*c%3)%2==0;case e.PATTERN111:return(b*c%3+(b+c)%2)%2==0;default:throw new Error("bad maskPattern:"+a)}},f.getErrorCorrectPolynomial=function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},f.getLengthInBits=function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(b>=10&&27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(b>=27&&41>=b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}},f.getLostPoint=function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0==h&&0==i||g==a.isDark(d+h,e+i)&&f++);f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(e,d)&&!a.isDark(e+1,d)&&a.isDark(e+2,d)&&a.isDark(e+3,d)&&a.isDark(e+4,d)&&!a.isDark(e+5,d)&&a.isDark(e+6,d)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(e,d)&&!a.isDark(e+1,d)&&a.isDark(e+2,d)&&a.isDark(e+3,d)&&a.isDark(e+4,d)&&!a.isDark(e+5,d)&&a.isDark(e+6,d)&&(c+=40);return c},f.getRSBlocks=function(a,b){var c=f.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],g=0;d>g;g++)for(var h=c[3*g+0],i=c[3*g+1],k=c[3*g+2],l=0;h>l;l++)e.push(new j(i,k));return e},f.getRsBlockTable=function(a,b){switch(b){case d.L:return f.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return f.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return f.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return f.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},f.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.glog(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.glog(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},put:function(a,b){for(var c=0;b>c;c++)this.putBit((a>>>b-c-1&1)==1)},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}},QRCode=b}();
+
+    /* Application Logic */
+    function generateQR() {
+        var text = document.getElementById("qr-text").value;
+        var fg = document.getElementById("fg-color").value;
+        var bg = document.getElementById("bg-color").value;
+        var size = parseInt(document.getElementById("qr-size").value);
+        var container = document.getElementById("canvas-container");
+        var outputArea = document.getElementById("output-area");
+        var dlLink = document.getElementById("download-link");
+
+        if(!text.trim()) {
+            alert("Please enter some text or URL first.");
+            return;
+        }
+
+        // Clear previous
+        container.innerHTML = "";
+
+        // Generate Code
+        try {
+            var qrcode = new QRCode(container, {
+                text: text,
+                width: size,
+                height: size,
+                colorDark : fg,
+                colorLight : bg,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // Handle Download
+            setTimeout(function(){
+                var canvas = container.querySelector("canvas");
+                if(canvas) {
+                    var image = canvas.toDataURL("image/png");
+                    dlLink.href = image;
+                    outputArea.style.display = "block";
+                } else {
+                    // Fallback for IMG tag generation (older browsers)
+                    var img = container.querySelector("img");
+                    if(img) {
+                        dlLink.href = img.src;
+                        outputArea.style.display = "block";
+                    }
+                }
+            }, 100);
+
+        } catch (e) {
+            alert("Error generating QR code. Try shorter text.");
+        }
+    }
+</script>
+
+</body>
+</html>
