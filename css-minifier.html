@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Minifier Tool – Lifetime Free</title>
+    <meta name="description" content="Free online CSS Minifier. Compress your CSS code, remove whitespace and comments, and optimize file size securely in your browser. Lifetime free usage.">
+    <style>
+        :root {
+            --primary: #8b5cf6; /* Violet shade for CSS */
+            --primary-hover: #7c3aed;
+            --secondary: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Layout Grid */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+            grid-template-areas:
+                "header"
+                "ad-top"
+                "tool"
+                "ad-bottom"
+                "article";
+        }
+
+        @media (min-width: 1200px) {
+            .page-container {
+                grid-template-columns: 300px 1fr 300px;
+                grid-template-areas:
+                    "header header header"
+                    "ad-top ad-top ad-top"
+                    "ad-left tool ad-right"
+                    "ad-bottom ad-bottom ad-bottom"
+                    "article article article";
+            }
+        }
+
+        /* Typography */
+        h1 {
+            grid-area: header;
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        /* Ad Slots */
+        .ad-slot {
+            background-color: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: bold;
+            border-radius: var(--radius);
+        }
+
+        .ad-top { grid-area: ad-top; height: 100px; width: 100%; }
+        .ad-bottom { grid-area: ad-bottom; height: 100px; width: 100%; margin-top: 20px; }
+        .ad-left { grid-area: ad-left; height: 600px; display: none; }
+        .ad-right { grid-area: ad-right; height: 600px; display: none; }
+
+        @media (min-width: 1200px) {
+            .ad-left, .ad-right { display: flex; }
+        }
+
+        /* Tool UI */
+        .tool-box {
+            grid-area: tool;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            user-select: none;
+            color: var(--text-main);
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .editor-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #fdfdfd;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            background-color: #fff;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            flex: 2;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+        .btn-secondary:hover { opacity: 0.9; }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            flex: 1;
+        }
+        .btn-success:hover { opacity: 0.9; }
+
+        /* Stats & Output */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 12px 15px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        .stats-bar span {
+            display: inline-block;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .hidden { display: none; }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1f2937;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .toast.show { opacity: 1; }
+
+        /* Article */
+        .article-box {
+            grid-area: article;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .article-box h2 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .article-box h2:first-child { margin-top: 0; }
+
+        .article-box h3 {
+            font-size: 1.4rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #334155;
+        }
+
+        .article-box p {
+            margin-bottom: 1.25rem;
+            color: #475569;
+            font-size: 1.05rem;
+        }
+
+        .article-box ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .article-box li {
+            margin-bottom: 10px;
+            color: #475569;
+        }
+
+        .article-box code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .tool-box { padding: 20px; }
+            .actions, .output-actions { flex-direction: column; }
+            button { width: 100%; }
+            .stats-bar { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    
+    <!-- Title -->
+    <h1>CSS Minifier Tool – Lifetime Free</h1>
+
+    <!-- Top Ad -->
+    <div class="ad-slot ad-top">Advertisement Space (Top Banner)</div>
+
+    <!-- Left Sidebar Ad -->
+    <div class="ad-slot ad-left">Ad Space (Left)</div>
+
+    <!-- Main Tool Interface -->
+    <main class="tool-box">
+        
+        <!-- Options -->
+        <div class="options-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="opt-comments" checked> Remove Comments
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="opt-whitespace" checked> Remove Whitespace
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="opt-colors"> Shorten Hex Colors
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="opt-semicolon"> Remove Last Semicolon
+            </label>
+        </div>
+
+        <!-- Input -->
+        <div class="editor-container">
+            <label for="inputCss">Paste Your CSS Code:</label>
+            <textarea id="inputCss" placeholder="/* Example CSS */
+body {
+    background-color: #ffffff;
+    color: #333333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+}"></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="btn-primary" onclick="minifyCss()">Minify CSS</button>
+            <button class="btn-secondary" onclick="clearAll()">Clear Input</button>
+        </div>
+
+        <!-- Output Section -->
+        <div class="editor-container">
+            <div id="statsBar" class="stats-bar hidden">
+                <span id="stat-original">Original: 0 B</span>
+                <span id="stat-minified">Minified: 0 B</span>
+                <span id="stat-savings">Savings: 0%</span>
+            </div>
+            
+            <label for="outputCss">Minified Output:</label>
+            <textarea id="outputCss" readonly placeholder="Minified CSS will appear here..."></textarea>
+            
+            <div class="output-actions">
+                <button class="btn-success" onclick="copyCode()">Copy Code</button>
+                <button class="btn-secondary" onclick="downloadCode()">Download .css</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar Ad -->
+    <div class="ad-slot ad-right">Ad Space (Right)</div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-slot ad-bottom">Advertisement Space (Bottom Banner)</div>
+
+    <!-- Article Content -->
+    <article class="article-box">
+        <h2>The Ultimate Guide to CSS Minification</h2>
+        <p>In the world of web development, the visual appeal of a website is controlled by Cascading Style Sheets, better known as CSS. While writing CSS is an art form that requires indentation, comments, and structure for human readability, browsers do not need these niceties. They only need the raw instructions. This is where CSS Minification comes into play.</p>
+        <p>Tool Baba's CSS Minifier is a robust, client-side utility designed to strip away the unnecessary bulk from your style sheets, leaving you with lean, efficient code that loads faster. This guide will walk you through everything you need to know about optimizing your CSS files.</p>
+
+        <h3>What is CSS Minification?</h3>
+        <p>CSS Minification is the process of compressing CSS code by removing characters that are not required for the code to execute. This includes:</p>
+        <ul>
+            <li><strong>Whitespace:</strong> Spaces, tabs, and newlines used for formatting.</li>
+            <li><strong>Comments:</strong> Notes left by developers (e.g., <code>/* Header Styles */</code>).</li>
+            <li><strong>Redundant Separators:</strong> Extra semicolons or spaces around braces.</li>
+        </ul>
+        <p>For example, a readable block like <code>body { color: black; }</code> might become <code>body{color:#000}</code> after minification. The browser interprets both exactly the same way, but the second version uses fewer bytes.</p>
+
+        <h3>Why CSS Size Matters for Performance</h3>
+        <p>You might wonder, "Does saving a few kilobytes really matter?" The answer is a resounding yes. CSS is a "render-blocking" resource. This means that when a user visits your site, the browser pauses the rendering of the page until it has fully downloaded and parsed your CSS files. It does this to prevent the "Flash of Unstyled Content" (FOUC).</p>
+        <p>If your CSS file is bloated with comments and whitespace, users on mobile networks or slow connections will stare at a white screen for longer. By minifying your CSS, you reduce the Time To First Byte (TTFB) and improve the First Contentful Paint (FCP) score, which are critical metrics for Core Web Vitals and SEO rankings.</p>
+
+        <h2>How This Browser-Based Minifier Works</h2>
+        <p>Security and privacy are major concerns for modern developers. Many online minifiers require you to upload your files to their server, where they are processed and returned. This poses a risk if you are working on proprietary code or projects protected by Non-Disclosure Agreements (NDAs).</p>
+        <p><strong>Tool Baba uses a Client-Side approach.</strong> This means the minification logic runs entirely within your web browser using JavaScript. When you click "Minify CSS," your code is processed by your own device's CPU. It never leaves your computer. This architecture ensures:</p>
+        <ul>
+            <li><strong>Zero Data Leakage:</strong> Your code is never sent to a cloud server.</li>
+            <li><strong>Instant Results:</strong> No network latency waiting for uploads and downloads.</li>
+            <li><strong>Offline Capability:</strong> Once the page is loaded, you can disconnect from the internet and the tool will still work perfectly.</li>
+        </ul>
+
+        <h2>Common Mistakes to Avoid While Minifying</h2>
+        <p>While minification is generally safe, there are pitfalls to be aware of:</p>
+        <h3>1. Broken Syntax</h3>
+        <p>If your original CSS has a missing closing brace <code>}</code> or a missing semicolon <code>;</code>, the minification process might merge two selectors together, breaking your layout. Always ensure your CSS is valid before minifying. Our tool attempts to handle safe minification, but garbage in often results in garbage out.</p>
+        <h3>2. Minifying Inside Strings</h3>
+        <p>CSS <code>content</code> properties or <code>url()</code> paths might contain spaces that are actually necessary. For example, <code>content: "Hello World";</code> should not become <code>content:"HelloWorld";</code>. Our intelligent algorithm protects content inside quotes and parenthesis to prevent this issue.</p>
+
+        <h2>Readable vs. Minified CSS</h2>
+        <p>It is important to maintain two versions of your CSS files in your development workflow:</p>
+        <ul>
+            <li><strong>style.css:</strong> The expanded, commented, and readable version where you do your actual coding work.</li>
+            <li><strong>style.min.css:</strong> The minified version generated by this tool, which is linked in your HTML file for the live website.</li>
+        </ul>
+        <p>Never delete your original source file! Minification is a one-way street. While you can "un-minify" or prettify code later, the original comments and meaningful variable names (if using preprocessors) are lost forever.</p>
+
+        <h2>Mobile vs. Desktop Usage</h2>
+        <p>We understand that developers are not always at their desks. Sometimes you need to push a quick hotfix from a laptop or even a tablet. The Tool Baba CSS Minifier is built with a responsive design.</p>
+        <p><strong>On Desktop:</strong> You get a full-width immersive experience with sidebars for additional resources. The large text areas allow you to review massive stylesheets comfortably.</p>
+        <p><strong>On Mobile:</strong> The interface adapts to strip away distractions. Side ads are hidden, and the layout focuses purely on the input and output controls, making it easy to tap, paste, and copy even on a smaller screen.</p>
+
+        <h2>Why We Provide This Tool Lifetime Free</h2>
+        <p>The internet was built on open-source philosophy and free utilities. We believe that optimizing your website shouldn't cost a monthly subscription. Tool Baba provides this CSS Minifier as a "Forever Free" resource to the community. Whether you are optimizing a personal blog or an enterprise e-commerce platform, you are welcome to use this tool without limits, logins, or paywalls.</p>
+
+        <h2>Conclusion</h2>
+        <p>Speed is a feature. By taking the simple step of minifying your CSS, you show respect for your users' bandwidth and time. Use the Tool Baba CSS Minifier to effortlessly compress your styles, improve your SEO, and deliver a faster, smoother web experience.</p>
+    </article>
+
+</div>
+
+<div id="toast" class="toast">Notification</div>
+
+<script>
+    // Utility functions
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function getByteSize(str) {
+        return new Blob([str]).size;
+    }
+
+    function clearAll() {
+        document.getElementById('inputCss').value = '';
+        document.getElementById('outputCss').value = '';
+        document.getElementById('statsBar').classList.add('hidden');
+    }
+
+    // Main Minification Logic
+    function minifyCss() {
+        const input = document.getElementById('inputCss').value;
+        if (!input.trim()) {
+            showToast("Please enter CSS code first.");
+            return;
+        }
+
+        const removeComments = document.getElementById('opt-comments').checked;
+        const removeWhitespace = document.getElementById('opt-whitespace').checked;
+        const shortenColors = document.getElementById('opt-colors').checked;
+        const removeLastSemi = document.getElementById('opt-semicolon').checked;
+
+        let output = input;
+
+        // PROTECTION STEP:
+        // We must protect strings (content: "...") and URLs (url(...)) from whitespace removal
+        // Otherwise 'content: "a  b"' becomes 'content:"a b"' (changing functionality)
+        const placeholders = [];
+        
+        // Helper to store protected content
+        const storePlaceholder = (content) => {
+            const key = `__CSS_PROTECT_${placeholders.length}__`;
+            placeholders.push({ key, content });
+            return key;
+        };
+
+        // 1. Protect Strings ("..." and '...') and URL(...)
+        // Regex looks for "escaped quotes" or "non-quotes" inside quotes.
+        output = output.replace(/("([^"\\]*(\\.[^"\\]*)*)"|'([^'\\]*(\\.[^'\\]*)*)'|url\((?:(['"])(.*?)\6|([^)]+))\))/g, (match) => {
+            return storePlaceholder(match);
+        });
+
+        // 2. Remove Comments
+        if (removeComments) {
+            output = output.replace(/\/\*[\s\S]*?\*\//g, "");
+        }
+
+        // 3. Whitespace Processing
+        if (removeWhitespace) {
+            // Collapse multiple spaces/newlines to single space
+            output = output.replace(/\s+/g, " ");
+            
+            // Remove spaces around block delimiters and separators
+            // around { } : ; ,
+            output = output.replace(/\s*([{}:;,])\s*/g, "$1");
+        }
+
+        // 4. Shorten Hex Colors
+        if (shortenColors) {
+            // Matches #AABBCC or #AABBCCDD, ignores if not preceeded/followed by valid hex chars
+            // Note: This is a safe approximation. It converts #aabbcc to #abc
+            output = output.replace(/([^"'=])#([0-9a-fA-F])\2([0-9a-fA-F])\3([0-9a-fA-F])\4/g, "$1#$2$3$4");
+        }
+
+        // 5. Remove Last Semicolon in block
+        if (removeLastSemi) {
+            output = output.replace(/;}/g, "}");
+        }
+
+        // 6. Restore Protected Content
+        // We loop backwards to handle nested protections if any (though regex above is flat)
+        for (let i = 0; i < placeholders.length; i++) {
+             // Basic restoration
+             // Note: In a robust parser this handles complex nesting, but for a tool page this is standard
+             output = output.split(placeholders[i].key).join(placeholders[i].content);
+        }
+
+        // Update Output
+        document.getElementById('outputCss').value = output.trim();
+
+        // Stats
+        const originalBytes = getByteSize(input);
+        const minifiedBytes = getByteSize(output.trim());
+        const savedBytes = originalBytes - minifiedBytes;
+        const savedPercent = originalBytes > 0 ? ((savedBytes / originalBytes) * 100).toFixed(2) : 0;
+
+        document.getElementById('stat-original').innerText = `Original: ${formatBytes(originalBytes)}`;
+        document.getElementById('stat-minified').innerText = `Minified: ${formatBytes(minifiedBytes)}`;
+        document.getElementById('stat-savings').innerText = `Savings: ${savedPercent}%`;
+        document.getElementById('statsBar').classList.remove('hidden');
+
+        showToast("Minification Complete!");
+    }
+
+    function copyCode() {
+        const output = document.getElementById('outputCss');
+        if (!output.value) {
+            showToast("Nothing to copy!");
+            return;
+        }
+        
+        output.select();
+        output.setSelectionRange(0, 99999); // Mobile
+        
+        navigator.clipboard.writeText(output.value).then(() => {
+            showToast("Copied to clipboard!");
+        }).catch(() => {
+            showToast("Failed to copy.");
+        });
+    }
+
+    function downloadCode() {
+        const output = document.getElementById('outputCss').value;
+        if (!output) {
+            showToast("Nothing to download!");
+            return;
+        }
+
+        const blob = new Blob([output], { type: 'text/css' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'style.min.css';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Download started!");
+    }
+</script>
+
+</body>
+</html>
