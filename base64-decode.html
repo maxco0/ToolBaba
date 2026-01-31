@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Decode Tool – Lifetime Free</title>
+    <meta name="description" content="Free online Base64 Decode tool. Convert Base64 encoded strings back to readable text securely in your browser. Handles Unicode, UTF-8, and special characters.">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --danger: #ef4444;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Layout Grid */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+            grid-template-areas:
+                "header"
+                "ad-top"
+                "tool"
+                "ad-bottom"
+                "article";
+        }
+
+        @media (min-width: 1200px) {
+            .page-container {
+                grid-template-columns: 300px 1fr 300px;
+                grid-template-areas:
+                    "header header header"
+                    "ad-top ad-top ad-top"
+                    "ad-left tool ad-right"
+                    "ad-bottom ad-bottom ad-bottom"
+                    "article article article";
+            }
+        }
+
+        /* Header */
+        h1 {
+            grid-area: header;
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        /* Ads */
+        .ad-slot {
+            background-color: #e2e8f0;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: bold;
+            border-radius: var(--radius);
+        }
+
+        .ad-top { grid-area: ad-top; height: 100px; width: 100%; }
+        .ad-bottom { grid-area: ad-bottom; height: 100px; width: 100%; margin-top: 20px; }
+        .ad-left { grid-area: ad-left; height: 600px; display: none; }
+        .ad-right { grid-area: ad-right; height: 600px; display: none; }
+
+        @media (min-width: 1200px) {
+            .ad-left, .ad-right { display: flex; }
+        }
+
+        /* Tool UI */
+        .tool-box {
+            grid-area: tool;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .input-wrapper {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #f9fafb;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background-color: #fff;
+        }
+
+        .file-upload-area {
+            margin-bottom: 15px;
+            margin-top: -10px;
+        }
+
+        input[type="file"] {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            flex: 2;
+            min-width: 150px;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+        .btn-secondary:hover { opacity: 0.9; }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            flex: 1;
+        }
+        .btn-success:hover { opacity: 0.9; }
+
+        .output-wrapper {
+            position: relative;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #111827;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .toast.show { opacity: 1; }
+
+        /* Article */
+        .article-box {
+            grid-area: article;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .article-box h2 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .article-box h2:first-child { margin-top: 0; }
+
+        .article-box h3 {
+            font-size: 1.4rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .article-box p {
+            margin-bottom: 1.25rem;
+            color: #4b5563;
+            font-size: 1.1rem;
+        }
+
+        .article-box ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .article-box li {
+            margin-bottom: 10px;
+            color: #4b5563;
+        }
+
+        .article-box code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d946ef;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .tool-box { padding: 20px; }
+            .actions { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    
+    <!-- Title -->
+    <h1>Base64 Decode Tool – Lifetime Free</h1>
+
+    <!-- Top Ad -->
+    <div class="ad-slot ad-top">Advertisement Space (Top Banner)</div>
+
+    <!-- Left Sidebar Ad -->
+    <div class="ad-slot ad-left">Ad Space (Left)</div>
+
+    <!-- Main Tool Interface -->
+    <main class="tool-box">
+        
+        <!-- Input -->
+        <div class="input-wrapper">
+            <label for="inputBase64">Enter Base64 String to Decode:</label>
+            <textarea id="inputBase64" placeholder="Paste encoded string here (e.g., SGVsbG8gV29ybGQh)..."></textarea>
+            <div id="errorMsg" class="error-msg">Invalid Base64 format. Please check your input.</div>
+        </div>
+
+        <div class="file-upload-area">
+            <label for="fileInput" style="display:inline; font-weight:normal; font-size: 0.9rem; margin-right: 10px;">Or upload a text file:</label>
+            <input type="file" id="fileInput" accept=".txt">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="btn-primary" onclick="decodeBase64()">Decode Base64</button>
+            <button class="btn-secondary" onclick="clearAll()">Clear Input</button>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-wrapper">
+            <label for="outputText">Decoded Result:</label>
+            <textarea id="outputText" readonly placeholder="Decoded text will appear here..."></textarea>
+            
+            <div class="actions" style="margin-top: 20px; margin-bottom: 0;">
+                <button class="btn-success" onclick="copyResult()">Copy Decoded Text</button>
+                <button class="btn-secondary" onclick="downloadResult()">Download .txt</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar Ad -->
+    <div class="ad-slot ad-right">Ad Space (Right)</div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-slot ad-bottom">Advertisement Space (Bottom Banner)</div>
+
+    <!-- Article Content -->
+    <article class="article-box">
+        <h2>Unraveling Base64: The Ultimate Decoding Guide</h2>
+        <p>Have you ever encountered a long, gibberish string of random characters that ends with an equals sign (<code>=</code>) while inspecting a website's code or checking an email header? If so, you have likely met Base64. While it looks like encryption, it is actually a method of data transport, and decoding it is a common task for developers, IT professionals, and curious tech enthusiasts.</p>
+        <p>Tool Baba’s Base64 Decode Tool is built to handle this translation instantly. We provide a clean, secure, and lifetime-free solution to turn those cryptic strings back into human-readable text. In this guide, we will explore the mechanics of Base64 decoding, why it’s used, and how to troubleshoot common issues.</p>
+
+        <h3>What is Base64 Decoding?</h3>
+        <p>Base64 decoding is the reverse process of Base64 encoding. It involves taking a string of text composed of the 64 characters in the Base64 alphabet (A-Z, a-z, 0-9, +, /) and converting it back into its original format—whether that is plain text, binary data, or an image.</p>
+        <p>The "base" in Base64 refers to the number of characters used to represent the data. Standard computer systems use binary (Base-2). When we want to send complex binary data (like an image) through a system that only understands basic text (like an old email server), we "encode" it into Base64. The "decoder" at the receiving end then translates that text back into the original binary file.</p>
+
+        <h3>Encoding vs. Decoding: The Key Difference</h3>
+        <p>Think of Base64 as a translator.</p>
+        <ul>
+            <li><strong>Encoding:</strong> Translating a sentence from English to a simplified, universal code language. This ensures the message survives the trip across the internet without getting corrupted by different server configurations.</li>
+            <li><strong>Decoding:</strong> Translating that code language back into the original English sentence so the human (or the browser) can understand it.</li>
+        </ul>
+
+        <h2>Common Real-Life Use Cases</h2>
+        <p>Why do we need a decoding tool? Here are scenarios where Base64 decoding is essential:</p>
+
+        <h3>1. Debugging JWTs (JSON Web Tokens)</h3>
+        <p>Modern web authentication often uses JWTs. These tokens look like long strings separated by dots. The "payload" part of a JWT is just a Base64URL-encoded JSON object. Developers often decode this part to verify if a user has the correct permissions (roles) or to check the token's expiration time.</p>
+
+        <h3>2. Analyzing Email Headers</h3>
+        <p>To support non-ASCII characters (like emojis or foreign languages) in email subject lines, protocols use MIME encoding, which often relies on Base64. If you look at raw email source code, you might see <code>=?UTF-8?B?...?=</code>. Decoding this string reveals the actual subject line.</p>
+
+        <h3>3. Hidden Data in URLs</h3>
+        <p>Sometimes, websites pass information via URL parameters encoded in Base64 to avoid issues with special characters like spaces or slashes breaking the link structure. Decoding these parameters can reveal what data is being transmitted.</p>
+
+        <h2>How This Decoder Works</h2>
+        <p>Our tool utilizes the native capabilities of your web browser. Specifically, we use a combination of JavaScript functions to ensure accuracy.</p>
+        <p>The core function is <code>atob()</code> (ASCII to Binary), which decodes the string. However, <code>atob</code> alone has a flaw: it does not handle Unicode characters (like encoded emojis or Chinese characters) correctly. To solve this, our tool applies a secondary layer of processing: <code>decodeURIComponent(escape(window.atob(str)))</code>. This ensures that multi-byte characters are reconstructed perfectly, preserving the integrity of your original text.</p>
+
+        <h2>Common Decoding Errors</h2>
+        <p>Decoding isn't always smooth sailing. Here are common errors you might face:</p>
+        <ul>
+            <li><strong>"The string to be decoded is not correctly encoded."</strong> This usually means the input string contains characters that are not part of the Base64 alphabet (like spaces or hyphens) or the length of the string is not a multiple of 4. Base64 strings must often be padded with <code>=</code> signs at the end to meet this length requirement.</li>
+            <li><strong>Garbage Output:</strong> If you decode a string and get weird symbols (), it might mean you are trying to decode binary data (like an image) as text. While the decoding worked, the result isn't meant to be read by humans.</li>
+        </ul>
+
+        <h2>Privacy: The Client-Side Advantage</h2>
+        <p>When decoding sensitive data—like authentication tokens or private messages—security is paramount. Using a server-side tool (where your data is sent to a backend cloud) is risky because that server could log your information.</p>
+        <p><strong>Tool Baba is 100% Client-Side.</strong> The decoding logic runs entirely in your browser's JavaScript engine. Your Base64 string never leaves your computer or phone. You can even disconnect from the internet after loading the page, and the tool will continue to function perfectly. This guarantees your data privacy.</p>
+
+        <h2>Mobile vs. Desktop Usage</h2>
+        <p>We designed this tool to be universally accessible:</p>
+        <h3>On Desktop</h3>
+        <p>The layout is optimized for productivity. You have a wide canvas to view long strings, sidebars for quick navigation (if applicable), and keyboard-friendly controls. It is a workstation-grade experience.</p>
+        <h3>On Mobile</h3>
+        <p>Decoding on the go? No problem. The interface adapts by hiding non-essential elements. The input fields resize to fit your screen, and the buttons become touch-optimized. Whether you are on an iPhone or an Android, debugging is just a tap away.</p>
+
+        <h2>Why Tool Baba is Free Forever</h2>
+        <p>In the developer community, access to basic utilities should be a right, not a privilege. We provide this Base64 Decoder as a free resource to help students, junior developers, and seasoned pros alike. There are no paywalls, no "premium" decoding speeds, and no hidden costs. It is simply a reliable tool that does one thing and does it well.</p>
+
+        <h2>Conclusion</h2>
+        <p>Base64 decoding is a fundamental skill in the digital age. It allows us to peek behind the curtain of data transmission and understand the information flowing between servers and clients. With the Tool Baba Base64 Decode Tool, you have a powerful, private, and portable decoder in your pocket whenever you need it.</p>
+    </article>
+
+</div>
+
+<div id="toast" class="toast">Message</div>
+
+<script>
+    // Toast Notification Utility
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // File Input Handler
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('inputBase64').value = e.target.result.trim();
+            showToast("File content loaded!");
+        };
+        reader.onerror = function() {
+            showToast("Error reading file.");
+        };
+        reader.readAsText(file);
+    });
+
+    // Clear Logic
+    function clearAll() {
+        document.getElementById('inputBase64').value = '';
+        document.getElementById('outputText').value = '';
+        document.getElementById('fileInput').value = '';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // Decoding Logic
+    function decodeBase64() {
+        const inputField = document.getElementById('inputBase64');
+        const outputField = document.getElementById('outputText');
+        const errorMsg = document.getElementById('errorMsg');
+        
+        // Reset output and error
+        outputField.value = "";
+        errorMsg.style.display = 'none';
+
+        let input = inputField.value.trim();
+
+        if (!input) {
+            showToast("Please enter a string to decode.");
+            return;
+        }
+
+        try {
+            // Standard decoding logic for text
+            // 1. atob() converts Base64 to binary string
+            // 2. escape() converts binary string chars to %XX hex codes
+            // 3. decodeURIComponent() converts %XX to proper UTF-8 chars
+            const decoded = decodeURIComponent(escape(window.atob(input)));
+            outputField.value = decoded;
+            showToast("Decoding successful!");
+        } catch (e) {
+            console.error(e);
+            // Handle failure
+            errorMsg.style.display = 'block';
+            errorMsg.innerText = "Error: Invalid Base64 string. Check for spaces or corrupted characters.";
+            showToast("Decoding failed.");
+        }
+    }
+
+    // Copy Logic
+    function copyResult() {
+        const output = document.getElementById('outputText');
+        if (!output.value) {
+            showToast("Nothing to copy!");
+            return;
+        }
+
+        output.select();
+        output.setSelectionRange(0, 99999); // For mobile
+
+        navigator.clipboard.writeText(output.value).then(() => {
+            showToast("Decoded text copied!");
+        }).catch(() => {
+            showToast("Failed to copy automatically.");
+        });
+    }
+
+    // Download Logic
+    function downloadResult() {
+        const content = document.getElementById('outputText').value;
+        if (!content) {
+            showToast("Nothing to download!");
+            return;
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'decoded-text.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Download started!");
+    }
+</script>
+
+</body>
+</html>
