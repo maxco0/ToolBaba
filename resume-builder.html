@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder Tool – Create Professional Resume for Free</title>
+    <meta name="description" content="Build a professional resume in minutes with our free online Resume Builder. Real-time preview, PDF download, and expert tips for landing your dream job.">
+    <style>
+        /* --- RESET & GLOBAL STYLES --- */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --ad-bg: #e0e0e0;
+            --border-color: #dcdcdc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: #333; line-height: 1.6; }
+        
+        /* --- LAYOUT GRID --- */
+        .page-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .main-grid { display: flex; gap: 20px; align-items: flex-start; justify-content: center; }
+        .content-column { flex: 1; max-width: 1000px; min-width: 0; } /* Center column */
+        
+        /* --- ADVERTISEMENT STYLES --- */
+        .ad-placeholder { background-color: var(--ad-bg); border: 1px dashed #aaa; display: flex; align-items: center; justify-content: center; color: #666; font-weight: bold; font-size: 0.9rem; text-align: center; }
+        .ad-top { width: 100%; height: 90px; margin-bottom: 30px; }
+        .ad-bottom { width: 100%; height: 90px; margin-top: 40px; }
+        .ad-sidebar { width: 160px; height: 600px; position: sticky; top: 20px; flex-shrink: 0; }
+        .ad-left { display: none; } /* Show on large screens */
+        .ad-right { display: none; } /* Show on large screens */
+
+        @media (min-width: 1300px) {
+            .ad-left, .ad-right { display: flex; }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { text-align: center; color: var(--primary-color); margin-bottom: 10px; font-size: 2rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        h2 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin: 40px 0 20px; }
+        h3 { color: var(--accent-color); margin: 25px 0 10px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        
+        /* --- RESUME BUILDER UI --- */
+        .builder-container { display: flex; flex-wrap: wrap; gap: 30px; }
+        
+        /* Form Section */
+        .editor-panel { flex: 1; min-width: 320px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
+        .form-section { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .form-section:last-child { border-bottom: none; }
+        .section-head { font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #555; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; transition: border 0.3s; }
+        input:focus, textarea:focus { border-color: var(--accent-color); outline: none; }
+        textarea { resize: vertical; min-height: 80px; }
+        
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+
+        /* Dynamic Entries (Exp/Edu) */
+        .dynamic-item { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 10px; position: relative; animation: fadeIn 0.3s; }
+        .btn-remove { position: absolute; top: 10px; right: 10px; color: #e74c3c; cursor: pointer; font-size: 0.8rem; background: none; border: none; font-weight: bold; }
+        .btn-add { background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+        .btn-add:hover { background: #34495e; }
+
+        /* Preview Section */
+        .preview-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; align-items: center; }
+        .sticky-preview { position: sticky; top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        
+        /* THE RESUME (A4 Representation) */
+        #resume-paper {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 15mm; /* Standard margin */
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            color: #222;
+            font-family: 'Times New Roman', Times, serif; /* Professional Serif */
+            overflow: hidden;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        /* Resume Internals */
+        .res-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 15px; }
+        .res-name { font-size: 26pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #222; font-family: 'Arial', sans-serif; letter-spacing: 1px; }
+        .res-role { font-size: 14pt; color: #555; margin-bottom: 10px; font-style: italic; }
+        .res-contact { font-size: 10pt; color: #444; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        
+        .res-section { margin-bottom: 20px; }
+        .res-sect-title { font-size: 12pt; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #333; margin-bottom: 10px; padding-bottom: 2px; font-family: 'Arial', sans-serif; }
+        .res-content { font-size: 11pt; line-height: 1.4; }
+        
+        .res-job { margin-bottom: 12px; }
+        .res-job-head { display: flex; justify-content: space-between; font-weight: bold; }
+        .res-job-sub { font-style: italic; font-size: 10.5pt; color: #444; margin-bottom: 3px; }
+        .res-desc { white-space: pre-line; text-align: left; }
+        
+        .res-skills-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        .res-tag { background: #eee; padding: 2px 8px; font-size: 10pt; border-radius: 3px; border: 1px solid #ddd; }
+
+        /* Actions */
+        .download-btn { width: 100%; max-width: 210mm; background: #27ae60; color: white; border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; transition: transform 0.2s; }
+        .download-btn:hover { background: #219150; transform: translateY(-2px); }
+
+        /* --- ARTICLE SECTION --- */
+        .article-container { background: white; padding: 40px; border-radius: 8px; margin-top: 40px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .article-content { max-width: 800px; margin: 0 auto; font-size: 1.1rem; color: #444; }
+        .article-content ul { margin: 15px 0 15px 30px; }
+        .article-content li { margin-bottom: 8px; }
+
+        /* --- PRINT STYLES (PDF GENERATION) --- */
+        @media print {
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .no-print, .editor-panel, .ad-placeholder, h1, .subtitle, .download-btn, .article-container, .ad-sidebar { display: none !important; }
+            .page-container { margin: 0; padding: 0; width: 100%; max-width: none; }
+            .main-grid { display: block; }
+            .preview-panel { display: block; width: 100%; }
+            .sticky-preview { position: static; }
+            #resume-paper { width: 100%; height: auto; box-shadow: none; margin: 0; border: none; padding: 0; }
+            @page { size: auto; margin: 15mm; }
+        }
+
+        /* Mobile Fixes */
+        @media (max-width: 768px) {
+            .row { flex-direction: column; gap: 0; }
+            #resume-paper { width: 100%; padding: 15px; min-height: auto; }
+            .res-name { font-size: 20pt; }
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <header class="no-print">
+        <h1>Resume Builder Tool – Create Professional Resume for Free</h1>
+        <div class="subtitle">Build, Preview, and Download your professional CV in minutes without signing up.</div>
+    </header>
+
+    <!-- TOP AD -->
+    <div class="ad-placeholder ad-top no-print">Top Banner Ad Area (Responsive)</div>
+
+    <div class="main-grid">
+        <!-- LEFT AD -->
+        <aside class="ad-placeholder ad-sidebar ad-left no-print">
+            Left Sidebar Ad
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="content-column">
+            
+            <div class="builder-container">
+                
+                <!-- LEFT: FORM INPUTS -->
+                <div class="editor-panel no-print">
+                    <h2 style="margin-top:0;">Resume Details</h2>
+
+                    <!-- Personal Info -->
+                    <div class="form-section">
+                        <div class="section-head">Personal Information</div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="inp-name" placeholder="e.g. John Doe" oninput="updateResume()">
+                        </div>
+                        <div class="form-group">
+                            <label>Current Job Title</label>
+                            <input type="text" id="inp-title" placeholder="e.g. Senior Software Engineer" oninput="updateResume()">
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                <label>Email</label>
+                                <input type="email" id="inp-email" placeholder="john@example.com" oninput="updateResume()">
+                            </div>
+                            <div class="form-group col">
+                                <label>Phone</label>
+                                <input type="text" id="inp-phone" placeholder="+1 234 567 890" oninput="updateResume()">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                <label>City, Country</label>
+                                <input type="text" id="inp-loc" placeholder="New York, USA" oninput="updateResume()">
+                            </div>
+                            <div class="form-group col">
+                                <label>LinkedIn / Portfolio</label>
+                                <input type="text" id="inp-link" placeholder="linkedin.com/in/johndoe" oninput="updateResume()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="form-section">
+                        <div class="section-head">Professional Summary</div>
+                        <div class="form-group">
+                            <textarea id="inp-summary" placeholder="Briefly describe your experience, achievements, and career goals..." oninput="updateResume()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="form-section">
+                        <div class="section-head">
+                            Work Experience
+                            <button class="btn-add" onclick="addExperienceField()">+ Add Job</button>
+                        </div>
+                        <div id="experience-list">
+                            <!-- Dynamic items go here -->
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="form-section">
+                        <div class="section-head">
+                            Education
+                            <button class="btn-add" onclick="addEducationField()">+ Add School</button>
+                        </div>
+                        <div id="education-list">
+                            <!-- Dynamic items go here -->
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="form-section">
+                        <div class="section-head">Skills</div>
+                        <div class="form-group">
+                            <label>Enter skills separated by commas</label>
+                            <input type="text" id="inp-skills" placeholder="HTML, CSS, Project Management, Communication..." oninput="updateResume()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PREVIEW & DOWNLOAD -->
+                <div class="preview-panel">
+                    <div class="sticky-preview">
+                        <button class="download-btn no-print" onclick="printResume()">Download Resume as PDF</button>
+                        
+                        <!-- THE RESUME -->
+                        <div id="resume-paper">
+                            <!-- Header -->
+                            <div class="res-header">
+                                <div class="res-name" id="prev-name">YOUR NAME</div>
+                                <div class="res-role" id="prev-title">Job Title</div>
+                                <div class="res-contact">
+                                    <span id="prev-email">email@example.com</span> |
+                                    <span id="prev-phone">Phone Number</span> |
+                                    <span id="prev-loc">Location</span> |
+                                    <span id="prev-link">Portfolio Link</span>
+                                </div>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="res-section" id="sec-summary">
+                                <div class="res-sect-title">Professional Summary</div>
+                                <div class="res-content" id="prev-summary">
+                                    Your professional summary will appear here. Write 2-3 sentences about your expertise and career goals.
+                                </div>
+                            </div>
+
+                            <!-- Experience -->
+                            <div class="res-section" id="sec-experience">
+                                <div class="res-sect-title">Work Experience</div>
+                                <div id="prev-experience-list">
+                                    <!-- Preview items -->
+                                </div>
+                            </div>
+
+                            <!-- Education -->
+                            <div class="res-section" id="sec-education">
+                                <div class="res-sect-title">Education</div>
+                                <div id="prev-education-list">
+                                    <!-- Preview items -->
+                                </div>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="res-section" id="sec-skills">
+                                <div class="res-sect-title">Skills</div>
+                                <div class="res-skills-list" id="prev-skills">
+                                    <span class="res-tag">Skill 1</span>
+                                    <span class="res-tag">Skill 2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- RIGHT AD -->
+        <aside class="ad-placeholder ad-sidebar ad-right no-print">
+            Right Sidebar Ad
+        </aside>
+    </div>
+
+    <!-- BOTTOM AD -->
+    <div class="ad-placeholder ad-bottom no-print">Bottom Banner Ad Area</div>
+
+    <!-- ARTICLE SECTION -->
+    <article class="article-container no-print">
+        <div class="article-content">
+            <h1>Why You Need a Professional Resume Builder in 2025</h1>
+            
+            <p>In today's competitive job market, your resume is more than just a piece of paper; it is your personal marketing tool. Whether you are a fresh graduate stepping into the corporate world or a seasoned professional looking for a career switch, the quality of your resume determines whether you land an interview or get lost in the pile. This is where a reliable <strong>Online Resume Builder</strong> becomes your best ally.</p>
+
+            <h2>What is a Resume and Why Does It Matter?</h2>
+            <p>A resume (often confused with a CV) is a concise document that outlines your education, work history, skills, and achievements. Unlike a CV (Curriculum Vitae), which is detailed and lengthy, a resume is typically one or two pages long and tailored to a specific job role.</p>
+            <p>Recruiters spend an average of <strong>6 to 7 seconds</strong> scanning a resume. If your document is cluttered, poorly formatted, or hard to read, it will likely be rejected immediately. A professional layout ensures that your key information stands out instantly.</p>
+
+            <h2>The Difference Between a CV and a Resume</h2>
+            <p>Many job seekers use these terms interchangeably, but there are distinct differences:</p>
+            <ul>
+                <li><strong>Length:</strong> Resumes are short (1-2 pages), while CVs can be much longer.</li>
+                <li><strong>Focus:</strong> Resumes focus on professional competency for a specific job. CVs focus on academic credentials and comprehensive history.</li>
+                <li><strong>Usage:</strong> Resumes are standard for industry jobs. CVs are preferred for academic, research, and medical roles.</li>
+            </ul>
+
+            <h2>What Do Recruiters Look For?</h2>
+            <p>When a hiring manager looks at your application, they are searching for specific signals:</p>
+            <ol>
+                <li><strong>Relevance:</strong> Do your skills match the job description?</li>
+                <li><strong>Clarity:</strong> Is the information easy to find?</li>
+                <li><strong>Impact:</strong> Did you list responsibilities or achievements? (e.g., "Increased sales by 20%" vs. "Responsible for sales").</li>
+                <li><strong>Professionalism:</strong> Are there typos or bad formatting?</li>
+            </ol>
+
+            <h2>How This Free Resume Builder Helps You</h2>
+            <p>Writing a resume from scratch using a word processor can be frustrating. margins break, fonts mismatch, and aligning dates is a nightmare. Our <strong>Tool Baba Resume Builder</strong> solves these problems instantly.</p>
+            
+            <h3>1. ATS-Friendly Layouts</h3>
+            <p>Many companies use Applicant Tracking Systems (ATS) to filter resumes before a human ever sees them. Our builder uses clean code and standard fonts (Serif/Sans-Serif) that ATS software can easily read, increasing your chances of passing the digital gatekeeper.</p>
+
+            <h3>2. Real-Time Preview</h3>
+            <p>Why guess what your resume looks like? As you type in our form, the preview on the right updates instantly. You can see exactly how your text fits on the page, ensuring no awkward page breaks or spacing issues.</p>
+
+            <h3>3. Privacy First – No Data Storage</h3>
+            <p>Unlike other tools that force you to create an account and save your data on their servers, our tool is completely client-side. <strong>We do not store your data.</strong> Everything happens in your browser. When you close the tab, your data is gone. This ensures maximum privacy and security for your personal information.</p>
+
+            <h2>How to Write a Strong Resume</h2>
+            <p>Using the tool is easy, but the content is up to you. Here are some expert tips for each section:</p>
+
+            <h3>The Professional Summary</h3>
+            <p>Avoid generic objectives like "Looking for a challenging role." Instead, write a power statement: "Results-oriented Marketing Manager with 5 years of experience in digital campaigns and SEO, proven track record of increasing organic traffic by 40%."</p>
+
+            <h3>Work Experience</h3>
+            <p>Use reverse-chronological order (newest job first). Use bullet points, not paragraphs. Start every bullet with a strong action verb (e.g., Created, Managed, Developed, Led).</p>
+
+            <h3>Skills Section</h3>
+            <p>Don't just list soft skills like "Hard worker." Focus on hard skills relevant to the job (e.g., Python, Adobe Photoshop, Financial Analysis). Our tool formats these into clean, readable tags.</p>
+
+            <h2>Common Resume Mistakes to Avoid</h2>
+            <ul>
+                <li><strong>Typos:</strong> Always proofread. A misspelled word kills credibility.</li>
+                <li><strong>Unprofessional Email:</strong> Use <em>firstname.lastname@email.com</em>, not <em>coolguy123@email.com</em>.</li>
+                <li><strong>Too Much Clutter:</strong> Keep it clean. White space is your friend.</li>
+                <li><strong>Including a Photo:</strong> In the US, UK, and Canada, including a photo is generally discouraged unless you are an actor or model.</li>
+            </ul>
+
+            <h2>Mobile vs. Desktop Usage</h2>
+            <p>While our tool is fully responsive and works on mobile phones, we highly recommend using a <strong>Desktop or Laptop</strong> to create your resume. Resume building requires typing and reviewing large amounts of text, which is much easier on a physical keyboard and a larger screen.</p>
+
+            <h2>Final Thoughts</h2>
+            <p>Your resume is the bridge between you and your dream job. Don't let poor formatting burn that bridge. Use our free tool to create a clean, professional, and effective resume today. Fill in your details, check the preview, and click <strong>Download PDF</strong>. It's that simple.</p>
+            
+            <p><em>Start building your future today!</em></p>
+        </div>
+    </article>
+
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    
+    // Initial Setup
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add one empty field for experience and education by default
+        addExperienceField();
+        addEducationField();
+        
+        // Initial render
+        updateResume();
+    });
+
+    // --- DYNAMIC FIELDS LOGIC ---
+
+    function addExperienceField() {
+        const container = document.getElementById('experience-list');
+        const id = Date.now();
+        const div = document.createElement('div');
+        div.className = 'dynamic-item';
+        div.innerHTML = `
+            <button class="btn-remove" onclick="this.parentElement.remove(); updateResume()">Remove</button>
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" class="exp-company" placeholder="Company Name" oninput="updateResume()">
+            </div>
+            <div class="form-group">
+                <label>Job Role</label>
+                <input type="text" class="exp-role" placeholder="Job Title" oninput="updateResume()">
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label>Start Date</label>
+                    <input type="text" class="exp-start" placeholder="Jan 2020" oninput="updateResume()">
+                </div>
+                <div class="form-group col">
+                    <label>End Date</label>
+                    <input type="text" class="exp-end" placeholder="Present" oninput="updateResume()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="exp-desc" placeholder="Describe your responsibilities and achievements..." oninput="updateResume()"></textarea>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function addEducationField() {
+        const container = document.getElementById('education-list');
+        const div = document.createElement('div');
+        div.className = 'dynamic-item';
+        div.innerHTML = `
+            <button class="btn-remove" onclick="this.parentElement.remove(); updateResume()">Remove</button>
+            <div class="form-group">
+                <label>Institute / University</label>
+                <input type="text" class="edu-school" placeholder="University Name" oninput="updateResume()">
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label>Degree / Certificate</label>
+                    <input type="text" class="edu-degree" placeholder="B.Sc Computer Science" oninput="updateResume()">
+                </div>
+                <div class="form-group col">
+                    <label>Year</label>
+                    <input type="text" class="edu-year" placeholder="2018 - 2022" oninput="updateResume()">
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    // --- LIVE PREVIEW LOGIC ---
+
+    function updateResume() {
+        // 1. Personal Details
+        document.getElementById('prev-name').textContent = document.getElementById('inp-name').value || "YOUR NAME";
+        document.getElementById('prev-title').textContent = document.getElementById('inp-title').value || "Job Title";
+        document.getElementById('prev-email').textContent = document.getElementById('inp-email').value || "email@example.com";
+        document.getElementById('prev-phone').textContent = document.getElementById('inp-phone').value || "Phone";
+        document.getElementById('prev-loc').textContent = document.getElementById('inp-loc').value || "City, Country";
+        
+        const linkVal = document.getElementById('inp-link').value;
+        const linkEl = document.getElementById('prev-link');
+        linkEl.textContent = linkVal || "Portfolio Link";
+        linkEl.style.display = linkVal ? "inline" : "none";
+
+        // 2. Summary
+        const summaryVal = document.getElementById('inp-summary').value;
+        const summarySec = document.getElementById('sec-summary');
+        if(summaryVal.trim() === "") {
+            summarySec.style.display = 'none';
+        } else {
+            summarySec.style.display = 'block';
+            document.getElementById('prev-summary').innerText = summaryVal;
+        }
+
+        // 3. Experience
+        const expList = document.getElementById('experience-list').children;
+        const prevExpContainer = document.getElementById('prev-experience-list');
+        prevExpContainer.innerHTML = ""; // Clear current
+        
+        let hasExp = false;
+        Array.from(expList).forEach(item => {
+            const company = item.querySelector('.exp-company').value;
+            const role = item.querySelector('.exp-role').value;
+            const start = item.querySelector('.exp-start').value;
+            const end = item.querySelector('.exp-end').value;
+            const desc = item.querySelector('.exp-desc').value;
+
+            if(company || role) {
+                hasExp = true;
+                const jobDiv = document.createElement('div');
+                jobDiv.className = 'res-job';
+                jobDiv.innerHTML = `
+                    <div class="res-job-head">
+                        <span>${company}</span>
+                        <span>${start} ${start && end ? '-' : ''} ${end}</span>
+                    </div>
+                    <div class="res-job-sub">${role}</div>
+                    <div class="res-desc">${desc}</div>
+                `;
+                prevExpContainer.appendChild(jobDiv);
+            }
+        });
+        document.getElementById('sec-experience').style.display = hasExp ? 'block' : 'none';
+
+        // 4. Education
+        const eduList = document.getElementById('education-list').children;
+        const prevEduContainer = document.getElementById('prev-education-list');
+        prevEduContainer.innerHTML = "";
+        
+        let hasEdu = false;
+        Array.from(eduList).forEach(item => {
+            const school = item.querySelector('.edu-school').value;
+            const degree = item.querySelector('.edu-degree').value;
+            const year = item.querySelector('.edu-year').value;
+
+            if(school || degree) {
+                hasEdu = true;
+                const eduDiv = document.createElement('div');
+                eduDiv.className = 'res-job'; // Reusing job class for spacing
+                eduDiv.innerHTML = `
+                    <div class="res-job-head">
+                        <span>${school}</span>
+                        <span>${year}</span>
+                    </div>
+                    <div class="res-job-sub">${degree}</div>
+                `;
+                prevEduContainer.appendChild(eduDiv);
+            }
+        });
+        document.getElementById('sec-education').style.display = hasEdu ? 'block' : 'none';
+
+        // 5. Skills
+        const skillsInput = document.getElementById('inp-skills').value;
+        const prevSkillsContainer = document.getElementById('prev-skills');
+        prevSkillsContainer.innerHTML = "";
+        
+        if(skillsInput.trim() === "") {
+            document.getElementById('sec-skills').style.display = 'none';
+        } else {
+            document.getElementById('sec-skills').style.display = 'block';
+            const skillsArr = skillsInput.split(',');
+            skillsArr.forEach(skill => {
+                if(skill.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'res-tag';
+                    span.textContent = skill.trim();
+                    prevSkillsContainer.appendChild(span);
+                }
+            });
+        }
+    }
+
+    // --- PDF DOWNLOAD ---
+    function printResume() {
+        window.print();
+    }
+
+</script>
+</body>
+</html>
