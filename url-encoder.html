@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder Tool – Lifetime Free</title>
+    <meta name="description" content="Free online URL Encoder tool. Securely encode URLs directly in your browser. Handle special characters, spaces, and query parameters easily.">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Layout Grid */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            gap: 20px;
+            grid-template-areas: 
+                "title"
+                "ad-top"
+                "main"
+                "ad-bottom"
+                "article";
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: 250px 1fr 250px;
+                grid-template-areas: 
+                    "title title title"
+                    "ad-top ad-top ad-top"
+                    "ad-left main ad-right"
+                    "ad-bottom ad-bottom ad-bottom"
+                    "article article article";
+            }
+        }
+
+        /* Header */
+        .page-title {
+            grid-area: title;
+            text-align: center;
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        /* Ad Slots */
+        .ad-box {
+            background-color: #e2e8f0;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-radius: var(--radius);
+        }
+
+        .ad-top { grid-area: ad-top; height: 90px; width: 100%; margin-bottom: 10px; }
+        .ad-bottom { grid-area: ad-bottom; height: 90px; width: 100%; margin-top: 10px; }
+        
+        .ad-left { 
+            grid-area: ad-left; 
+            height: 600px; 
+            display: none; /* Hidden on mobile */
+        }
+        
+        .ad-right { 
+            grid-area: ad-right; 
+            height: 600px; 
+            display: none; /* Hidden on mobile */
+        }
+
+        @media (min-width: 1024px) {
+            .ad-left, .ad-right { display: flex; }
+        }
+
+        /* Tool Section */
+        .tool-wrapper {
+            grid-area: main;
+            background: var(--surface);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: monospace;
+            font-size: 1rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            flex: 2;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+        .btn-secondary:hover { opacity: 0.9; }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            flex: 1;
+        }
+        .btn-success:hover { opacity: 0.9; }
+
+        .result-group {
+            position: relative;
+        }
+
+        .copy-msg {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: var(--text-main);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-msg.visible {
+            opacity: 1;
+        }
+
+        /* Article Section */
+        .content-area {
+            grid-area: article;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .content-area h2 {
+            font-size: 1.8rem;
+            color: var(--text-main);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .content-area h2:first-child { margin-top: 0; }
+
+        .content-area h3 {
+            font-size: 1.4rem;
+            color: var(--text-main);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .content-area p {
+            margin-bottom: 18px;
+            color: #334155;
+            font-size: 1.1rem;
+        }
+
+        .content-area ul {
+            margin-bottom: 20px;
+            padding-left: 25px;
+        }
+
+        .content-area li {
+            margin-bottom: 10px;
+            color: #334155;
+        }
+
+        .content-area code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Page Title -->
+    <h1 class="page-title">URL Encoder Tool – Lifetime Free</h1>
+
+    <!-- Top Ad -->
+    <div class="ad-box ad-top">Advertisement Space (Top Banner)</div>
+
+    <!-- Left Sidebar Ad -->
+    <div class="ad-box ad-left">Advertisement Space (Left Sidebar)</div>
+
+    <!-- Main Tool Interface -->
+    <div class="tool-wrapper">
+        <div class="input-group">
+            <label for="inputUrl">Enter URL to Encode:</label>
+            <textarea id="inputUrl" placeholder="Example: https://example.com/search?q=hello world"></textarea>
+        </div>
+
+        <div class="actions">
+            <button class="btn-primary" onclick="encodeUrl()">Encode URL</button>
+            <button class="btn-secondary" onclick="clearFields()">Clear</button>
+        </div>
+
+        <div class="result-group">
+            <div id="copyMsg" class="copy-msg">Copied to clipboard!</div>
+            <label for="outputUrl">Encoded Result:</label>
+            <textarea id="outputUrl" readonly placeholder="Result will appear here..."></textarea>
+            <div class="actions" style="margin-top: 15px; margin-bottom: 0;">
+                <button class="btn-success" onclick="copyResult()">Copy Result</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar Ad -->
+    <div class="ad-box ad-right">Advertisement Space (Right Sidebar)</div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-box ad-bottom">Advertisement Space (Bottom Banner)</div>
+
+    <!-- Long Article Content -->
+    <div class="content-area">
+        <h2>Understanding URL Encoding: The Complete Guide</h2>
+        <p>Welcome to Tool Baba's comprehensive URL Encoder. If you have ever wondered why some web addresses look like a mess of percentage signs and numbers, you are in the right place. In the world of web development and digital marketing, keeping your links clean, functional, and secure is paramount. This guide will walk you through everything you need to know about URL encoding, why it is absolutely critical for the modern web, and how our tool simplifies this process for you completely free of charge.</p>
+
+        <h3>What Exactly is URL Encoding?</h3>
+        <p>URL Encoding, also technically known as "Percent-encoding," is a mechanism for encoding information in a Uniform Resource Identifier (URI). URLs can only be sent over the Internet using the ASCII character-set. If a URL contains characters outside the ASCII set, the URL has to be converted into a valid ASCII format.</p>
+        <p>This conversion replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits. For example, if you have a space in your filename or query parameter, the browser cannot interpret that space correctly within the strict rules of a URL. URL encoding translates that space into <code>%20</code>. Similarly, an ampersand (&) might be converted into <code>%26</code> if it is part of the data rather than a separator.</p>
+
+        <h2>Why is URL Encoding Important?</h2>
+        <p>You might be thinking, "My browser seems to handle links just fine, why do I need a tool?" While modern browsers are smart enough to handle many basic encoding tasks automatically in the address bar, encoding becomes critical when you are dealing with data transfer between servers, APIs, and databases.</p>
+
+        <h3>1. Data Integrity</h3>
+        <p>When data is passed via HTTP requests (like when you submit a form), special characters can confuse the server. For instance, the character <code>&</code> is reserved to separate query parameters. If a user types "Smith & Sons" into a name field and that data is put directly into a URL, the server might think the parameter ends after "Smith". Encoding turns it into "Smith%20%26%20Sons", ensuring the data remains intact.</p>
+
+        <h3>2. Cross-Browser Compatibility</h3>
+        <p>Not all browsers or web clients handle non-standard characters the same way. By explicitly encoding your URLs before sharing or using them in your code, you ensure that the link works universally across Chrome, Safari, Firefox, and even command-line tools like cURL.</p>
+
+        <h3>3. Preventing Security Vulnerabilities</h3>
+        <p>Improperly encoded URLs can sometimes lead to security gaps, such as injection attacks. By standardizing the input into a percent-encoded format, you add a layer of predictability and safety to how your application handles user input.</p>
+
+        <h2>Common URL Problems Solved by Encoding</h2>
+        <p>Let's look at some real-life scenarios where neglecting to encode a URL causes immediate failure:</p>
+        <ul>
+            <li><strong>Spaces in Filenames:</strong> You upload a PDF named "Annual Report 2024.pdf". If you link to it without encoding, the link breaks at the first space. The encoded version, "Annual%20Report%202024.pdf", works perfectly.</li>
+            <li><strong>UTM Parameters:</strong> Marketers often use UTM tags to track traffic. If your campaign name is "Spring Sale!", the exclamation mark needs to be encoded to <code>%21</code> to avoid tracking errors.</li>
+            <li><strong>International Characters:</strong> If your URL contains non-English characters (like accents, emojis, or Asian scripts), they must be encoded to be valid.</li>
+        </ul>
+
+        <h2>How This URL Encoder Works</h2>
+        <p>We built this tool to be the simplest, fastest way to encode strings. Under the hood, we utilize the native JavaScript function <code>encodeURIComponent()</code>. This is the industry standard for encoding specific parts of a URL, such as query string parameters.</p>
+        
+        <p>Here is the difference between the two main JavaScript encoding functions, just for your knowledge:</p>
+        <ul>
+            <li><strong>encodeURI():</strong> Used for the entire URL. It leaves characters like <code>: / ? #</code> alone because they are needed for the URL structure.</li>
+            <li><strong>encodeURIComponent():</strong> Used for individual components (like a search query). It encodes <em>everything</em>, including slashes and question marks, to ensure the data is treated purely as text, not as part of the URL structure. Our tool uses this method to ensure maximum safety for your data strings.</li>
+        </ul>
+
+        <h2>The Privacy Advantage: Client-Side Processing</h2>
+        <p>In an era where data privacy is a massive concern, you should be careful about where you paste your data. Many online tools send your input to their server to process it. This means your potentially sensitive URLs, API keys, or personal query parameters are logged in someone else's database.</p>
+        <p><strong>Tool Baba is different.</strong> Our URL Encoder operates 100% on the "Client-Side." This means the code runs entirely inside your web browser. The data you paste into the input box never leaves your computer. It is never sent to our servers, never stored, and never seen by us. You can even disconnect your internet after loading the page, and the tool will still work perfectly.</p>
+
+        <h2>Mobile vs. Desktop Experience</h2>
+        <p>We understand that developers and marketers work on the go. We have designed this interface to be fully responsive.</p>
+        <h3>On Desktop</h3>
+        <p>You get a spacious view with convenient sidebars. The input and output boxes are large enough to handle massive strings of data without constant scrolling. The copy and clear buttons are positioned for rapid workflow.</p>
+        <h3>On Mobile</h3>
+        <p>The layout adapts instantly. The sidebars (where ads might usually distract you) are hidden to give full focus to the tool. The buttons stack neatly, ensuring they are easy to tap with a thumb. Whether you are on an iPhone or an Android device, the encoding functionality remains lightning fast.</p>
+
+        <h2>Why We Provide This Tool Lifetime Free</h2>
+        <p>At Tool Baba, we believe that basic utilities should not be hidden behind paywalls or riddled with intrusive pop-ups. URL encoding is a fundamental necessity of the internet. By providing this tool for free, we hope to support the developer community, students, and content creators.</p>
+        <p>There are no limits on usage. You can encode one URL or a thousand URLs a day. There is no login required, no "credits" system, and no premium version. What you see is what you get: a robust, professional-grade tool ready for production use.</p>
+
+        <h2>Conclusion</h2>
+        <p>Whether you are debugging a complex REST API, setting up Facebook ad parameters, or simply trying to share a link with a filename containing spaces, correct URL encoding is the bridge between a broken link and a successful click. Use this tool whenever you need to sanitize your strings, and rest assured that your data remains private and secure.</p>
+        <p>Bookmark this page for your future projects. Good luck with your coding and marketing campaigns!</p>
+    </div>
+
+</div>
+
+<script>
+    function encodeUrl() {
+        const input = document.getElementById('inputUrl');
+        const output = document.getElementById('outputUrl');
+        
+        let rawValue = input.value.trim();
+
+        if (!rawValue) {
+            output.value = "";
+            alert("Please enter a URL or text to encode.");
+            return;
+        }
+
+        try {
+            // Using encodeURIComponent as it's safer for query parameters
+            // which is the most common use case for these tools.
+            const encodedValue = encodeURIComponent(rawValue);
+            output.value = encodedValue;
+        } catch (error) {
+            output.value = "Error encoding URL. Please check your input.";
+            console.error(error);
+        }
+    }
+
+    function clearFields() {
+        document.getElementById('inputUrl').value = '';
+        document.getElementById('outputUrl').value = '';
+    }
+
+    function copyResult() {
+        const output = document.getElementById('outputUrl');
+        const msg = document.getElementById('copyMsg');
+
+        if (!output.value) return;
+
+        // Select the text field
+        output.select();
+        output.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(output.value).then(() => {
+            // Show success message
+            msg.classList.add('visible');
+            setTimeout(() => {
+                msg.classList.remove('visible');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert("Failed to copy. Please copy manually.");
+        });
+    }
+</script>
+
+</body>
+</html>
