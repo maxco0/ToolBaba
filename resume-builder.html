@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Resume Builder – Create Premium CV with Photo</title>
+    <meta name="description" content="Create a premium, photo-ready resume in minutes. Free online builder with professional PDF download.">
+    <style>
+        /* --- 1. GLOBAL VARIABLES & RESET --- */
+        :root {
+            --primary: #1a252f; /* Dark Navy */
+            --accent: #d35400; /* Burnt Orange for buttons */
+            --bg-body: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            
+            /* Resume Template Colors */
+            --res-sidebar: #2c3e50;
+            --res-text-light: #ecf0f1;
+            --res-accent: #3498db;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg-body); color: #333; line-height: 1.6; }
+
+        /* --- 2. PAGE LAYOUT (GRID SYSTEM) --- */
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        header { text-align: center; margin-bottom: 30px; padding: 20px 0; }
+        h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        .subtitle { color: #666; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Ads */
+        .ad-box { background: #e8e8e8; border: 2px dashed #bbb; display: flex; align-items: center; justify-content: center; color: #777; font-weight: bold; font-size: 0.9rem; margin: 20px 0; }
+        .ad-top { height: 100px; width: 100%; border-radius: 8px; }
+        .ad-side { width: 160px; height: 600px; position: sticky; top: 20px; display: none; }
+        .ad-bottom { height: 120px; width: 100%; border-radius: 8px; margin-top: 50px; }
+        
+        @media (min-width: 1400px) { .ad-side { display: flex; } }
+
+        /* MAIN BUILDER AREA */
+        .builder-wrapper { 
+            display: flex; 
+            gap: 30px; 
+            justify-content: center; 
+            align-items: flex-start; 
+        }
+
+        /* LEFT: EDITOR FORM */
+        .editor-area { 
+            flex: 1; 
+            max-width: 600px; 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: var(--shadow); 
+        }
+
+        /* RIGHT: PREVIEW AREA */
+        .preview-area { 
+            flex: 1; 
+            max-width: 850px; 
+            position: sticky; 
+            top: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        /* FORM STYLING */
+        .section-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin: 25px 0 15px 0; border-left: 5px solid var(--accent); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .section-title:first-child { margin-top: 0; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+        
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: 0.2s; background: #fafafa; }
+        input:focus, textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* Custom File Upload */
+        .file-upload { position: relative; display: inline-block; width: 100%; }
+        .file-upload input[type="file"] { display: none; }
+        .file-label { display: block; background: #eee; color: #333; padding: 12px; text-align: center; border-radius: 6px; cursor: pointer; border: 1px dashed #aaa; transition: 0.3s; }
+        .file-label:hover { background: #ddd; border-color: #777; }
+        
+        /* Buttons */
+        .btn-add { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        .btn-remove { background: #e74c3c; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; float: right; cursor: pointer; margin-bottom: 5px; }
+        
+        .dynamic-box { background: #f8f9fa; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px; animation: slideIn 0.3s ease; }
+
+        .download-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(39, 174, 96, 0.6); }
+
+        /* --- 3. THE RESUME PAPER (VISUAL DESIGN) --- */
+        #resume-preview {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.15);
+            display: flex; /* Sidebar layout */
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif; /* Clean modern font */
+        }
+
+        /* Sidebar (Left) */
+        .res-left {
+            width: 32%;
+            background-color: var(--res-sidebar);
+            color: var(--res-text-light);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .res-profile-img-container {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            background: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #res-photo { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .res-photo-placeholder { font-size: 40px; color: rgba(255,255,255,0.3); }
+
+        .res-contact-group { margin-top: 30px; text-align: left; }
+        .res-left-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 15px; color: #bdc3c7; font-weight: bold; }
+        
+        .res-contact-item { margin-bottom: 12px; font-size: 12px; word-break: break-all; display: flex; gap: 10px; align-items: center; }
+        .res-skill-tag { background: rgba(0,0,0,0.2); padding: 4px 8px; margin-bottom: 6px; display: inline-block; font-size: 12px; border-radius: 3px; }
+
+        /* Main Content (Right) */
+        .res-right {
+            width: 68%;
+            padding: 40px 30px;
+            color: #333;
+        }
+
+        .res-name { font-size: 32px; font-weight: 800; text-transform: uppercase; color: var(--res-sidebar); line-height: 1.1; margin-bottom: 5px; }
+        .res-job-title { font-size: 16px; color: var(--res-accent); font-weight: 600; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .res-section { margin-bottom: 30px; }
+        .res-head { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: var(--res-sidebar); 
+            border-bottom: 2px solid var(--res-accent); 
+            padding-bottom: 5px; 
+            margin-bottom: 15px; 
+            text-transform: uppercase;
+        }
+        
+        .res-item { margin-bottom: 15px; }
+        .res-item-top { display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; color: #2c3e50; }
+        .res-item-sub { font-size: 13px; color: var(--res-accent); margin-bottom: 4px; font-weight: 600; }
+        .res-desc { font-size: 13px; color: #555; line-height: 1.5; white-space: pre-line; }
+
+        /* --- 4. ARTICLE SECTION --- */
+        .article-box { background: white; padding: 50px; border-radius: 12px; margin-top: 60px; box-shadow: var(--shadow); max-width: 1000px; margin-left: auto; margin-right: auto; }
+        .article-content h2 { color: var(--primary); margin-top: 30px; }
+        .article-content p { margin-bottom: 15px; color: #555; }
+
+        /* --- 5. PRINT & RESPONSIVE --- */
+        @media screen and (max-width: 1100px) {
+            .builder-wrapper { flex-direction: column; align-items: center; }
+            .preview-area { position: relative; width: 100%; top: 0; }
+            #resume-preview { transform: scale(0.8); transform-origin: top center; margin-bottom: -150px; }
+            .ad-side { display: none; }
+        }
+
+        @media screen and (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            #resume-preview { transform: scale(0.48); margin-bottom: -400px; }
+            .res-name { font-size: 24px; }
+        }
+
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .container, .ad-box, header, .editor-area, .download-btn, .article-box, .btn-add, .btn-remove { display: none !important; }
+            .preview-area { display: block; position: absolute; top: 0; left: 0; width: 100%; max-width: none; margin: 0; padding: 0; }
+            #resume-preview { box-shadow: none; margin: 0; width: 100%; height: 100%; transform: none; }
+            @page { size: A4; margin: 0; }
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <h1>Pro Resume Builder Tool</h1>
+        <div class="subtitle">Create a stunning, job-winning resume with our premium photo-supported builder. No signup required.</div>
+    </header>
+
+    <!-- Top Ad -->
+    <div class="ad-box ad-top">Advertisement Area (Top Banner)</div>
+
+    <div class="builder-wrapper">
+        
+        <!-- LEFT AD (Desktop) -->
+        <div class="ad-box ad-side">Ad Left</div>
+
+        <!-- FORM SECTION -->
+        <div class="editor-area">
+            
+            <!-- Personal Details -->
+            <div class="section-title">Personal Details</div>
+            
+            <!-- Photo Upload -->
+            <div class="form-group" style="background: #eef2f7; padding: 15px; border-radius: 8px;">
+                <label>Profile Photo (Optional)</label>
+                <div class="file-upload">
+                    <label for="inp-photo" class="file-label">📸 Click to Upload Photo</label>
+                    <input type="file" id="inp-photo" accept="image/*" onchange="handlePhoto(this)">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="inp-name" placeholder="John Doe" oninput="updateResume()">
+            </div>
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" id="inp-job" placeholder="Senior Graphic Designer" oninput="updateResume()">
+            </div>
+            
+            <div class="form-row">
+                <div class="col">
+                    <label>Phone</label>
+                    <input type="text" id="inp-phone" placeholder="+1 234 567 890" oninput="updateResume()">
+                </div>
+                <div class="col">
+                    <label>Email</label>
+                    <input type="text" id="inp-email" placeholder="hello@johndoe.com" oninput="updateResume()">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="col">
+                    <label>City, Country</label>
+                    <input type="text" id="inp-loc" placeholder="London, UK" oninput="updateResume()">
+                </div>
+                <div class="col">
+                    <label>Website / Link</label>
+                    <input type="text" id="inp-web" placeholder="portfolio.com" oninput="updateResume()">
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="section-title">Professional Summary</div>
+            <textarea id="inp-summary" placeholder="Write a short professional summary about your career achievements..." oninput="updateResume()"></textarea>
+
+            <!-- Experience -->
+            <div class="section-title">
+                Experience
+                <button class="btn-add" onclick="addExperience()">+ Add Job</button>
+            </div>
+            <div id="exp-container"></div>
+
+            <!-- Education -->
+            <div class="section-title">
+                Education
+                <button class="btn-add" onclick="addEducation()">+ Add School</button>
+            </div>
+            <div id="edu-container"></div>
+
+            <!-- Skills -->
+            <div class="section-title">Skills (Side Column)</div>
+            <div class="form-group">
+                <label>Enter skills separated by commas</label>
+                <input type="text" id="inp-skills" placeholder="Photoshop, Team Leadership, Python, SEO..." oninput="updateResume()">
+            </div>
+
+            <!-- Languages -->
+            <div class="section-title">Languages</div>
+            <div class="form-group">
+                <label>Enter languages separated by commas</label>
+                <input type="text" id="inp-lang" placeholder="English, Spanish, French..." oninput="updateResume()">
+            </div>
+        </div>
+
+        <!-- PREVIEW SECTION -->
+        <div class="preview-area">
+            <button class="download-btn" onclick="window.print()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download PDF
+            </button>
+
+            <!-- RESUME PAPER START -->
+            <div id="resume-preview">
+                
+                <!-- LEFT COLUMN (DARK) -->
+                <div class="res-left">
+                    <div class="res-profile-img-container">
+                        <span class="res-photo-placeholder" id="res-photo-icon">User</span>
+                        <img id="res-photo" src="" alt="Profile">
+                    </div>
+
+                    <div class="res-contact-group">
+                        <div class="res-left-title">Contact</div>
+                        <div class="res-contact-item" id="prev-phone">Phone Number</div>
+                        <div class="res-contact-item" id="prev-email">email@example.com</div>
+                        <div class="res-contact-item" id="prev-loc">City, Country</div>
+                        <div class="res-contact-item" id="prev-web">website.com</div>
+                    </div>
+
+                    <div class="res-contact-group">
+                        <div class="res-left-title">Skills</div>
+                        <div id="prev-skills">
+                            <!-- Skills Tags -->
+                        </div>
+                    </div>
+
+                    <div class="res-contact-group">
+                        <div class="res-left-title">Languages</div>
+                        <div id="prev-lang" style="font-size: 13px; line-height: 1.6;">
+                            <!-- Languages List -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (LIGHT) -->
+                <div class="res-right">
+                    <div class="res-name" id="prev-name">YOUR NAME</div>
+                    <div class="res-job-title" id="prev-job">JOB TITLE</div>
+                    
+                    <div class="res-section" id="sec-summary">
+                        <div class="res-head">Profile</div>
+                        <div class="res-desc" id="prev-summary">
+                            Your professional profile summary will appear here. It highlights your key achievements and goals.
+                        </div>
+                    </div>
+
+                    <div class="res-section">
+                        <div class="res-head">Experience</div>
+                        <div id="prev-exp">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+
+                    <div class="res-section">
+                        <div class="res-head">Education</div>
+                        <div id="prev-edu">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- RESUME PAPER END -->
+        </div>
+
+        <!-- RIGHT AD (Desktop) -->
+        <div class="ad-box ad-side">Ad Right</div>
+
+    </div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-box ad-bottom">Advertisement Area (Bottom)</div>
+
+    <!-- ARTICLE SECTION -->
+    <article class="article-box">
+        <div class="article-content">
+            <h2>Why This is the Best Free Resume Builder</h2>
+            <p>Welcome to the ultimate tool for job seekers. In the modern corporate world, visual appeal matters just as much as content. Recruiters spend only a few seconds scanning a CV. Our tool helps you create a layout that stops the scroll and demands attention.</p>
+            
+            <h3>Why Choose a 2-Column Layout?</h3>
+            <p>We designed this tool with a premium 2-column sidebar structure. This is the industry standard for high-level professionals because:</p>
+            <ul>
+                <li><strong>Readability:</strong> It separates short data (contact, skills) from long data (experience), making it easier for eyes to scan.</li>
+                <li><strong>Space Efficiency:</strong> You can fit more information on a single page without it looking cluttered.</li>
+                <li><strong>Aesthetic Appeal:</strong> The dark sidebar creates a strong visual contrast that looks professional and confident.</li>
+            </ul>
+
+            <h3>Photo on Resume: Yes or No?</h3>
+            <p>We have added a <strong>Photo Upload</strong> feature because many international markets (Europe, Asia, Middle East) expect a professional headshot. If you are applying in the US or UK, you can simply skip the photo upload, and the design will adjust naturally.</p>
+
+            <h3>How to Use This Tool</h3>
+            <p>1. <strong>Fill the Form:</strong> Start typing your details on the left. The resume on the right updates instantly.<br>
+            2. <strong>Upload Photo:</strong> Click the upload button to add a square or circular headshot.<br>
+            3. <strong>Add Sections:</strong> Use the "+ Add Job" buttons to add as many experience blocks as you need.<br>
+            4. <strong>Download:</strong> Click the green "Download PDF" button. It uses your browser's native high-quality print engine.</p>
+
+            <p><em>No hidden fees. No watermarks. Just a great resume.</em></p>
+        </div>
+    </article>
+
+</div>
+
+<script>
+    // --- 1. INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        addExperience();
+        addEducation();
+        updateResume();
+    });
+
+    // --- 2. DYNAMIC FIELD GENERATORS ---
+    function addExperience() {
+        const div = document.createElement('div');
+        div.className = 'dynamic-box';
+        div.innerHTML = `
+            <button class="btn-remove" onclick="removeNode(this)">Remove</button>
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" class="exp-comp" placeholder="Google Inc." oninput="updateResume()">
+            </div>
+            <div class="form-group">
+                <label>Job Role</label>
+                <input type="text" class="exp-role" placeholder="Senior Developer" oninput="updateResume()">
+            </div>
+            <div class="form-row">
+                <div class="col"><input type="text" class="exp-date" placeholder="2020 - Present" oninput="updateResume()"></div>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <textarea class="exp-desc" placeholder="Details about your role..." oninput="updateResume()"></textarea>
+            </div>
+        `;
+        document.getElementById('exp-container').appendChild(div);
+    }
+
+    function addEducation() {
+        const div = document.createElement('div');
+        div.className = 'dynamic-box';
+        div.innerHTML = `
+            <button class="btn-remove" onclick="removeNode(this)">Remove</button>
+            <div class="form-group">
+                <label>University / School</label>
+                <input type="text" class="edu-school" placeholder="Harvard University" oninput="updateResume()">
+            </div>
+            <div class="form-row">
+                <div class="col"><input type="text" class="edu-degree" placeholder="B.Sc Computer Science" oninput="updateResume()"></div>
+                <div class="col"><input type="text" class="edu-date" placeholder="2018 - 2022" oninput="updateResume()"></div>
+            </div>
+        `;
+        document.getElementById('edu-container').appendChild(div);
+    }
+
+    function removeNode(btn) {
+        btn.parentElement.remove();
+        updateResume();
+    }
+
+    // --- 3. PHOTO HANDLING ---
+    function handlePhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('res-photo');
+                const icon = document.getElementById('res-photo-icon');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                icon.style.display = 'none';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // --- 4. LIVE UPDATE LOGIC ---
+    function updateResume() {
+        // Text Fields
+        setText('prev-name', 'inp-name', 'YOUR NAME');
+        setText('prev-job', 'inp-job', 'JOB TITLE');
+        setText('prev-phone', 'inp-phone', '');
+        setText('prev-email', 'inp-email', '');
+        setText('prev-loc', 'inp-loc', '');
+        setText('prev-web', 'inp-web', '');
+        setText('prev-summary', 'inp-summary', 'Your summary goes here...');
+
+        // Skills
+        const skillStr = document.getElementById('inp-skills').value;
+        const skillBox = document.getElementById('prev-skills');
+        skillBox.innerHTML = '';
+        if(skillStr) {
+            skillStr.split(',').forEach(s => {
+                if(s.trim()) {
+                    const tag = document.createElement('span');
+                    tag.className = 'res-skill-tag';
+                    tag.innerText = s.trim();
+                    skillBox.appendChild(tag);
+                }
+            });
+        }
+
+        // Languages
+        const langStr = document.getElementById('inp-lang').value;
+        const langBox = document.getElementById('prev-lang');
+        langBox.innerText = langStr;
+
+        // Experience Rendering
+        const expBox = document.getElementById('prev-exp');
+        expBox.innerHTML = '';
+        document.querySelectorAll('#exp-container .dynamic-box').forEach(box => {
+            const comp = box.querySelector('.exp-comp').value;
+            const role = box.querySelector('.exp-role').value;
+            const date = box.querySelector('.exp-date').value;
+            const desc = box.querySelector('.exp-desc').value;
+            
+            if(comp || role) {
+                const item = document.createElement('div');
+                item.className = 'res-item';
+                item.innerHTML = `
+                    <div class="res-item-top"><span>${comp}</span> <span>${date}</span></div>
+                    <div class="res-item-sub">${role}</div>
+                    <div class="res-desc">${desc}</div>
+                `;
+                expBox.appendChild(item);
+            }
+        });
+
+        // Education Rendering
+        const eduBox = document.getElementById('prev-edu');
+        eduBox.innerHTML = '';
+        document.querySelectorAll('#edu-container .dynamic-box').forEach(box => {
+            const school = box.querySelector('.edu-school').value;
+            const degree = box.querySelector('.edu-degree').value;
+            const date = box.querySelector('.edu-date').value;
+            
+            if(school || degree) {
+                const item = document.createElement('div');
+                item.className = 'res-item';
+                item.innerHTML = `
+                    <div class="res-item-top"><span>${school}</span> <span>${date}</span></div>
+                    <div class="res-item-sub">${degree}</div>
+                `;
+                eduBox.appendChild(item);
+            }
+        });
+    }
+
+    function setText(targetId, inputId, defaultText) {
+        const val = document.getElementById(inputId).value;
+        document.getElementById(targetId).innerText = val ? val : defaultText;
+    }
+</script>
+
+</body>
+</html>
