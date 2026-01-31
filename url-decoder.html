@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Decoder Tool – Lifetime Free</title>
+    <meta name="description" content="Free online URL Decoder tool. Convert encoded URLs back to readable text securely in your browser. Lifetime free usage, zero server-side processing.">
+    <style>
+        :root {
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --bg-body: #f4f6f8;
+            --bg-white: #ffffff;
+            --text-dark: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Layout Grid System */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "header"
+                "ad-top"
+                "tool"
+                "ad-bottom"
+                "article";
+        }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                grid-template-columns: 300px 1fr 300px;
+                grid-template-areas:
+                    "header header header"
+                    "ad-top ad-top ad-top"
+                    "ad-left tool ad-right"
+                    "ad-bottom ad-bottom ad-bottom"
+                    "article article article";
+            }
+        }
+
+        /* Header */
+        .page-header {
+            grid-area: header;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        /* Ads */
+        .ad-placeholder {
+            background-color: #e9ecef;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #495057;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-radius: var(--radius);
+        }
+
+        .ad-top { grid-area: ad-top; height: 90px; width: 100%; margin-bottom: 20px; }
+        .ad-bottom { grid-area: ad-bottom; height: 90px; width: 100%; margin-top: 20px; }
+        
+        .ad-left, .ad-right {
+            display: none; /* Hidden on mobile */
+            height: 600px;
+            width: 100%;
+        }
+
+        .ad-left { grid-area: ad-left; }
+        .ad-right { grid-area: ad-right; }
+
+        @media (min-width: 1024px) {
+            .ad-left, .ad-right { display: flex; }
+        }
+
+        /* Tool UI */
+        .tool-container {
+            grid-area: tool;
+            background: var(--bg-white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-decode {
+            background-color: var(--primary);
+            color: white;
+            flex-grow: 2;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            flex-grow: 1;
+        }
+
+        .btn-copy {
+            background-color: var(--success);
+            color: white;
+            flex-grow: 1;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .output-wrapper {
+            position: relative;
+        }
+
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            display: none;
+            text-align: center;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Article Section */
+        .article-content {
+            grid-area: article;
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        .article-content h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .article-content h2:first-of-type { margin-top: 0; }
+
+        .article-content h3 {
+            font-size: 1.4rem;
+            color: #343a40;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-content p {
+            margin-bottom: 1.2rem;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+
+        .article-content ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+
+        .article-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-family: monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .action-buttons { flex-direction: column; }
+            button { width: 100%; }
+            .article-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Title -->
+        <header class="page-header">
+            <h1>URL Decoder Tool – Lifetime Free</h1>
+        </header>
+
+        <!-- Top Ad -->
+        <div class="ad-placeholder ad-top">
+            Advertisement Space (Top Banner)
+        </div>
+
+        <!-- Left Ad -->
+        <div class="ad-placeholder ad-left">
+            Advertisement Space (Left Sidebar)
+        </div>
+
+        <!-- Tool UI -->
+        <main class="tool-container">
+            <div class="input-group">
+                <label for="input-url">Paste Encoded URL Here:</label>
+                <textarea id="input-url" placeholder="Example: https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%2520world"></textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-decode" onclick="decodeUrl()">Decode URL</button>
+                <button class="btn-secondary" onclick="clearInput()">Clear Input</button>
+            </div>
+
+            <div class="input-group output-wrapper">
+                <label for="output-url">Decoded Result:</label>
+                <textarea id="output-url" readonly placeholder="Result will appear here..."></textarea>
+                <div id="status-msg" class="status-message"></div>
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button class="btn-copy" onclick="copyToClipboard()">Copy Result</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Ad -->
+        <div class="ad-placeholder ad-right">
+            Advertisement Space (Right Sidebar)
+        </div>
+
+        <!-- Bottom Ad -->
+        <div class="ad-placeholder ad-bottom">
+            Advertisement Space (Bottom Banner)
+        </div>
+
+        <!-- Article Content -->
+        <article class="article-content">
+            <h2>The Comprehensive Guide to URL Decoding</h2>
+            <p>Welcome to the Tool Baba URL Decoder. In the intricate web of the internet, data travels in many forms. Often, what you see in your browser's address bar or within the code of a web application looks like a jumbled mess of percentage signs, numbers, and letters. This is "encoded" data. To make sense of it, you need a reliable, fast, and secure tool. That is exactly what we provide here.</p>
+            <p>This guide will take you through the technical depths of URL decoding, explaining why it exists, how it works, and why our client-side solution is the safest bet for your data privacy.</p>
+
+            <h3>What is URL Decoding?</h3>
+            <p>URL Decoding (also known as percent-decoding) is the process of converting a URL that contains special characters back into its original, human-readable format. When data is sent over the internet via HTTP, specific characters must be "encoded" to ensure they don't break the structure of the URL.</p>
+            <p>For example, a space cannot exist in a raw URL because it signifies the end of a command in many systems. Therefore, a space is encoded as <code>%20</code>. URL decoding is simply the reverse engineering of this process. It takes the safe, ASCII-compliant string and translates it back into the actual characters it represents.</p>
+            <p>The mechanism relies on a standardized system where a percent sign <code>%</code> is followed by two hexadecimal digits. The decoder reads these triplets and converts them into the corresponding byte, and eventually, the character you understand.</p>
+
+            <h2>Difference Between Encoded and Decoded URLs</h2>
+            <p>Understanding the visual difference is key to knowing when to use this tool. Let's look at a clear comparison:</p>
+            <ul>
+                <li><strong>Encoded URL:</strong> This version is safe for transmission across servers. It often looks like this: <code>https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhello%2520world</code>. As you can see, slashes become <code>%2F</code>, colons become <code>%3A</code>, and spaces become <code>%20</code>.</li>
+                <li><strong>Decoded URL:</strong> This is the version you are used to reading: <code>https://www.google.com/search?q=hello world</code>. It is clean, readable, and ready for human interpretation.</li>
+            </ul>
+            <p>While browsers handle this translation automatically in the address bar, developers and marketers often encounter raw encoded strings in databases, log files, or API responses. That is where a manual decoder becomes essential.</p>
+
+            <h2>Common Use Cases for URL Decoding</h2>
+            <p>Why would someone need a dedicated tool for this? The use cases are surprisingly vast in the digital world:</p>
+
+            <h3>1. Debugging Marketing Campaigns</h3>
+            <p>Digital marketers use UTM parameters to track the effectiveness of their ads. These parameters are often heavily encoded to pass complex data strings. If you see a URL ending in <code>utm_source%3Dfacebook%26utm_medium%3Dcpc</code>, you need to decode it to verify that your tracking tags are set up correctly.</p>
+
+            <h3>2. API Development and Testing</h3>
+            <p>Developers frequently work with REST APIs where data is passed via the URL query string. If an API request fails, it is often because a special character was mishandled. Decoding the request string helps developers isolate the issue and fix the bug.</p>
+
+            <h3>3. Analyzing Web Server Logs</h3>
+            <p>Server logs often store the raw HTTP request. If you are a system administrator trying to understand which pages a user visited, reading <code>%2Fblog%2Fpost%2Dname</code> is tedious. Decoding these logs makes traffic analysis significantly faster and more accurate.</p>
+
+            <h3>4. Security and Forensics</h3>
+            <p>Security analysts often decode URLs to inspect malicious payloads. Hackers frequently encode SQL injection commands or XSS scripts to bypass basic security filters. Decoding the URL allows the analyst to see exactly what the attacker was trying to inject into the application.</p>
+
+            <h2>How the URL Decoder Works in Browsers</h2>
+            <p>Our tool utilizes the native JavaScript capability built into your modern web browser. Specifically, we use the <code>decodeURIComponent()</code> function.</p>
+            <p>This function scans the input string for percent-encoded sequences. When it finds a <code>%</code>, it looks at the next two characters. If they form a valid hexadecimal number, it converts them. This ensures that characters from all languages, including complex UTF-8 characters like emojis or Asian scripts, are restored correctly.</p>
+            <p>It is important to note the difference between <code>decodeURI</code> and <code>decodeURIComponent</code>. The former is designed for full URLs and won't decode reserved characters like <code>/</code> or <code>?</code>. The latter, which we use, is more aggressive and decodes everything, ensuring that even query parameters containing URLs are fully expanded.</p>
+
+            <h2>Common Decoding Errors</h2>
+            <p>Sometimes, you might hit the "Decode" button and get an error. This usually happens for one of two reasons:</p>
+            <ul>
+                <li><strong>Malformed Sequences:</strong> If the input contains a <code>%</code> followed by only one digit (e.g., <code>%2</code>) or invalid hex characters (e.g., <code>%2G</code>), the decoding process will fail because the syntax is invalid.</li>
+                <li><strong>Double Encoding:</strong> Sometimes a URL is encoded twice. For example, <code>%2520</code>. The first pass decodes it to <code>%20</code>, and you must decode it a second time to get a space. Our tool handles single-pass decoding, so you may need to click decode twice if you suspect double encoding.</li>
+            </ul>
+
+            <h2>Privacy Benefits of Client-Side Decoding</h2>
+            <p>In today's digital landscape, data privacy is not just a feature; it is a necessity. Many online tools process your data by sending it to a remote server. This means your URL—which might contain sensitive session IDs, API keys, or personal email addresses—is traveling across the internet and potentially being logged in a stranger's database.</p>
+            <p><strong>Tool Baba guarantees 100% Client-Side Processing.</strong></p>
+            <p>What does this mean? It means the JavaScript code runs entirely on your device. The data you paste into the text box never leaves your browser. You could disconnect your internet connection, and this tool would still work perfectly. This architecture ensures that your sensitive data remains yours and yours alone.</p>
+
+            <h2>Mobile vs. Desktop Experience</h2>
+            <p>We have designed this URL Decoder with a "Mobile-First" philosophy that respects your screen real estate:</p>
+            <h3>On Desktop</h3>
+            <p>You get a productivity-focused layout. The input and output fields are large and side-by-side with helpful ad placements that do not interfere with your work. The clear separation allows for rapid copy-pasting during heavy development sessions.</p>
+            <h3>On Mobile</h3>
+            <p>The interface transforms. The sidebars disappear to prevent clutter. The buttons become touch-friendly, spanning the full width of the screen. We understand that you might be decoding a link from a text message or an email on the go, so we ensured the text size is legible without zooming.</p>
+
+            <h2>Why Tool Baba is Lifetime Free</h2>
+            <p>We believe that essential utilities should be accessible to everyone. Whether you are a student learning web development, a freelancer debugging a client's site, or a marketing manager checking links, you shouldn't have to pay for basic functionality.</p>
+            <p>Tool Baba is committed to keeping this URL Decoder free forever. There are no hidden subscriptions, no "pro" versions, and no login walls. It is a simple, honest tool for the community.</p>
+
+            <h2>Conclusion</h2>
+            <p>URL decoding is a fundamental skill in the internet age. It bridges the gap between how machines read data and how humans read data. By using a secure, client-side tool like ours, you ensure accuracy, efficiency, and privacy in your workflows.</p>
+            <p>Bookmark this page for your future needs. The next time you encounter a cryptic string of percent signs, you will know exactly where to turn to make sense of it.</p>
+        </article>
+    </div>
+
+    <script>
+        function decodeUrl() {
+            const inputField = document.getElementById('input-url');
+            const outputField = document.getElementById('output-url');
+            const statusMsg = document.getElementById('status-msg');
+            
+            // Reset status
+            statusMsg.style.display = 'none';
+            statusMsg.className = 'status-message';
+            
+            const rawValue = inputField.value.trim();
+
+            if (!rawValue) {
+                showStatus('Please enter some text to decode.', 'error');
+                outputField.value = "";
+                return;
+            }
+
+            try {
+                // Main decoding logic
+                // Using decodeURIComponent to handle all special chars including query params
+                const decodedValue = decodeURIComponent(rawValue);
+                
+                // Check if the result is exactly the same, might imply no decoding happened
+                // but strictly speaking, it's valid.
+                
+                outputField.value = decodedValue;
+                
+            } catch (error) {
+                // Handle malformed URI sequences (e.g. %2 or %GG)
+                console.error(error);
+                outputField.value = "";
+                showStatus('Error: Invalid encoded string. Check for incomplete % sequences.', 'error');
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('input-url').value = '';
+            document.getElementById('output-url').value = '';
+            const statusMsg = document.getElementById('status-msg');
+            statusMsg.style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const outputField = document.getElementById('output-url');
+            
+            if (!outputField.value) {
+                showStatus('Nothing to copy!', 'error');
+                return;
+            }
+
+            // Select text
+            outputField.select();
+            outputField.setSelectionRange(0, 99999); /* For mobile devices */
+
+            // Copy logic
+            navigator.clipboard.writeText(outputField.value)
+                .then(() => {
+                    showStatus('Decoded URL copied to clipboard!', 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showStatus('Failed to copy automatically.', 'error');
+                });
+        }
+
+        function showStatus(message, type) {
+            const statusMsg = document.getElementById('status-msg');
+            statusMsg.innerText = message;
+            statusMsg.className = 'status-message ' + (type === 'success' ? 'status-success' : 'status-error');
+            statusMsg.style.display = 'block';
+
+            // Auto hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMsg.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
