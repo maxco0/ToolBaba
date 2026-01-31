@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Tool Baba – Get in Touch</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f9fafb;
+            --text-color: #374151;
+            --heading-color: #111827;
+            --border-color: #e5e7eb;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-bg: #eff6ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--heading-color);
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        /* ADS CONFIGURATION */
+        .ad-box {
+            background-color: #e5e7eb;
+            border: 1px dashed #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        .ad-box::after {
+            content: "Advertisement Space";
+        }
+
+        .ad-top {
+            width: 100%;
+            height: 90px;
+            max-width: 970px;
+            margin: 0 auto 30px;
+        }
+
+        .ad-bottom {
+            width: 100%;
+            height: 90px;
+            max-width: 970px;
+            margin: 50px auto;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .ad-left, .ad-right {
+            width: 160px;
+            height: 600px;
+            flex-shrink: 0;
+            display: none; /* Hidden on mobile */
+            position: sticky;
+            top: 20px;
+        }
+
+        @media (min-width: 1200px) {
+            .ad-left, .ad-right {
+                display: flex;
+            }
+        }
+
+        /* MAIN CONTENT COLUMN */
+        .content-column {
+            flex-grow: 1;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* TRIGGER BOX */
+        .trigger-box {
+            background-color: var(--accent-bg);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .trigger-text {
+            font-size: 1.2rem;
+            color: #1e3a8a;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .trigger-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .trigger-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* CONTACT FORM SECTION */
+        .form-section {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+            scroll-margin-top: 20px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: var(--heading-color);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .form-header p {
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fdfdfd;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--heading-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ARTICLE SECTION */
+        .article-section {
+            background: white;
+            padding: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .article-content h2 {
+            font-size: 1.8rem;
+            color: var(--heading-color);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .article-content h3 {
+            font-size: 1.4rem;
+            color: #374151;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-content p {
+            margin-bottom: 18px;
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .article-content ul {
+            margin-bottom: 25px;
+            padding-left: 25px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .form-section, .article-section {
+                padding: 25px;
+            }
+            .trigger-text {
+                font-size: 1.1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Contact Tool Baba</h1>
+
+        <!-- Top Ad -->
+        <div class="ad-box ad-top"></div>
+
+        <!-- Trigger Box -->
+        <div class="trigger-box">
+            <div class="trigger-text">Need help, have a suggestion, or want to report a bug?</div>
+            <button class="trigger-btn" onclick="scrollToForm()">Contact Us Now</button>
+        </div>
+
+        <div class="main-layout">
+            <!-- Left Sidebar Ad -->
+            <div class="ad-box ad-left"></div>
+
+            <!-- Content Area -->
+            <div class="content-column">
+                
+                <!-- Contact Form -->
+                <div class="form-section" id="contactFormSection">
+                    <div class="form-header">
+                        <h2>Send Us a Message</h2>
+                        <p>We usually reply within 24-48 hours via email.</p>
+                    </div>
+                    <form id="contactForm" onsubmit="handleFormSubmit(event)">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" placeholder="you@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" placeholder="General Inquiry">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" placeholder="How can we help you?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Send Message</button>
+                        <div id="statusMsg" class="status-msg"></div>
+                    </form>
+                </div>
+
+                <!-- Bottom Ad (Inside Flow) -->
+                <div class="ad-box ad-bottom"></div>
+
+                <!-- Long Article -->
+                <div class="article-section">
+                    <div class="article-content">
+                        <h2>Connecting with Tool Baba: Our Commitment to You</h2>
+                        <p>In the rapidly evolving digital world, tools and utilities serve as the bridge between ideas and execution. At Tool Baba, we believe that providing these tools is only half the equation; the other half is building a relationship with the people who use them. This Contact page is not just a formality—it is a direct line to our development and support team. We value your presence here and want to ensure that your experience with our platform is seamless, efficient, and productive.</p>
+
+                        <h3>Why Your Feedback Matters</h3>
+                        <p>Tool Baba was built with a singular vision: to make complex digital tasks simple and accessible for everyone, free of charge. However, no software is perfect, and no platform is ever truly "finished." Your feedback is the fuel that drives our updates and improvements. When you take the time to send us a message, you are not just asking a question; you are helping to shape the future of this website.</p>
+                        <p>Whether you have discovered a minor glitch in our image resizer, a formatting error in our PDF tools, or simply have an idea for a completely new calculator, we want to hear it. Many of our most popular features were originally suggested by users just like you who took a moment to write to us.</p>
+
+                        <h3>When Should You Contact Us?</h3>
+                        <p>We maintain an open-door policy regarding communication, but to help us serve you better, here are the most common reasons users reach out:</p>
+                        <ul>
+                            <li><strong>Bug Reporting:</strong> If a tool isn't behaving as expected, please let us know. Be sure to mention which browser and device you are using so we can replicate and fix the issue quickly.</li>
+                            <li><strong>Feature Requests:</strong> Is there a tool you need but can't find? We are always looking to expand our library. If you need a specific converter, calculator, or generator, tell us about your workflow requirements.</li>
+                            <li><strong>Partnerships and Advertising:</strong> We are open to discussing opportunities that bring value to our user base. If you have a proposal, please use a professional subject line to ensure it reaches the right department.</li>
+                            <li><strong>General Support:</strong> If you are unsure how to use a specific feature, feel free to ask. While our tools are designed to be intuitive, we understand that sometimes a little extra guidance is needed.</li>
+                        </ul>
+
+                        <h3>Privacy and Security in Communication</h3>
+                        <p>In an age where data privacy is a major concern, we want to be completely transparent about how we handle your inquiries. When you use the form above, it triggers a direct email to our secure inbox. We do not store your messages in a public database, nor do we sell your contact information to third parties.</p>
+                        <p>We use the direct <code>mailto</code> method for our contact form. This ensures that the communication happens securely through your own trusted email provider (like Gmail, Outlook, or Yahoo). This method guarantees that you have a copy of your sent message and that the communication remains private between you and the Tool Baba team.</p>
+
+                        <h3>What to Expect After Sending a Message</h3>
+                        <p>We are a dedicated team of developers and content creators, but we are also humans. We strive to respond to every legitimate inquiry within 24 to 48 hours. However, during periods of high traffic or major updates, it might take us slightly longer to get back to you.</p>
+                        <p>Please note that we do not provide manual file processing services. For example, if you ask us to "convert this attached file for me," we will kindly direct you to use the free tools available on our website. Our goal is to empower you to handle these tasks independently and securely on your own device.</p>
+
+                        <h3>Building a Community of Trust</h3>
+                        <p>Trust is the foundation of the internet. By offering our tools for free, without hidden paywalls or aggressive data collection, we aim to build a trustworthy environment. Your communication helps us maintain that trust. If you ever see an ad that looks suspicious or experience behavior on the site that feels unsafe, please report it immediately. We take user safety seriously and will investigate any reports promptly.</p>
+
+                        <h3>A Note on Constructive Criticism</h3>
+                        <p>We love praise, but we value constructive criticism even more. If something frustrates you about our site design, ad placement, or tool speed, do not hesitate to tell us. We have thick skin and a strong desire to improve. Your honest critique is often more valuable than a generic compliment because it highlights the specific areas where we can grow.</p>
+
+                        <h2>Conclusion</h2>
+                        <p>Thank you for being a part of the Tool Baba community. Whether you are a daily visitor or a first-time user, your engagement is what keeps this platform alive. We look forward to reading your messages, implementing your suggestions, and continuing to provide high-quality, free web tools for years to come.</p>
+                        <p>Use the form above to get in touch, and let's build something great together.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar Ad -->
+            <div class="ad-box ad-right"></div>
+        </div>
+    </div>
+
+    <script>
+        function scrollToForm() {
+            const formSection = document.getElementById('contactFormSection');
+            formSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Get Values
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const statusDiv = document.getElementById('statusMsg');
+
+            // Basic Validation
+            if (!name || !email || !message) {
+                statusDiv.textContent = "Please fill in all required fields.";
+                statusDiv.className = "status-msg status-error";
+                statusDiv.style.display = "block";
+                return;
+            }
+
+            // Construct Mailto Link
+            // We use encodeURIComponent to ensure special characters don't break the link
+            const targetEmail = "nazibulmaxco1@gmail.com";
+            const finalSubject = subject ? `[Tool Baba Inquiry] ${subject}` : `[Tool Baba Inquiry] Message from ${name}`;
+            
+            const bodyContent = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+            
+            const mailtoLink = `mailto:${targetEmail}?subject=${encodeURIComponent(finalSubject)}&body=${bodyContent}`;
+
+            // Show Success Message
+            statusDiv.textContent = "Opening your email client...";
+            statusDiv.className = "status-msg status-success";
+            statusDiv.style.display = "block";
+
+            // Trigger Email Client
+            setTimeout(() => {
+                window.location.href = mailtoLink;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
