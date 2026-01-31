@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer Tool – Lifetime Free</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --heading-color: #111827;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--heading-color);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        /* ADS CONFIGURATION */
+        .ad-box {
+            background-color: #e5e7eb;
+            border: 1px dashed #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 90px;
+        }
+
+        .ad-box::after {
+            content: "Advertisement Space";
+        }
+
+        .ad-top {
+            width: 100%;
+            height: 90px;
+            max-width: 970px;
+            margin: 0 auto 30px;
+        }
+
+        .ad-bottom {
+            width: 100%;
+            height: 90px;
+            max-width: 970px;
+            margin: 50px auto;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .ad-left, .ad-right {
+            width: 160px;
+            height: 600px;
+            flex-shrink: 0;
+            display: none; /* Hidden on mobile */
+        }
+
+        @media (min-width: 1024px) {
+            .ad-left, .ad-right {
+                display: flex;
+            }
+        }
+
+        /* TOOL UI */
+        .tool-container {
+            flex-grow: 1;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #eff6ff;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover {
+            background: #dbeafe;
+            border-color: var(--primary-hover);
+        }
+
+        .upload-area input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-text {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* CONTROLS SECTION */
+        .controls-section {
+            display: none; /* Hidden until image loaded */
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .image-meta {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .presets {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            color: #4b5563;
+        }
+
+        .preset-btn:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-action:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* OUTPUT SECTION */
+        .output-section {
+            display: none;
+            margin-top: 30px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 30px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-title {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .comparison {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .comparison span {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .btn-download {
+            display: inline-block;
+            background-color: var(--success-color);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.1s;
+        }
+
+        .btn-download:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #ffffff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ARTICLE SECTION */
+        .article-section {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .article-content h2 {
+            font-size: 1.8rem;
+            color: var(--heading-color);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .article-content h3 {
+            font-size: 1.4rem;
+            color: #374151;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-content p {
+            margin-bottom: 18px;
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-bottom: 25px;
+            padding-left: 25px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .tool-container {
+                padding: 20px;
+            }
+            .article-section {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Image Resizer Tool – Lifetime Free</h1>
+
+        <!-- Top Ad -->
+        <div class="ad-box ad-top"></div>
+
+        <div class="main-layout">
+            <!-- Left Sidebar Ad -->
+            <div class="ad-box ad-left"></div>
+
+            <!-- Tool Section -->
+            <div class="tool-container">
+                <div class="upload-area">
+                    <input type="file" id="imageInput" accept="image/*" onchange="handleImageSelect(event)">
+                    <div class="upload-text">Click to Upload or Drag & Drop Image</div>
+                    <div style="font-size:0.9rem; color:#9ca3af; margin-top:5px;">Supports JPG, PNG, WEBP</div>
+                </div>
+
+                <div class="controls-section" id="controls">
+                    <div class="preview-container">
+                        <img id="originalPreview" class="preview-img" alt="Original Preview">
+                        <div class="image-meta" id="originalMeta"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <label for="widthInput">Width (px)</label>
+                            <input type="number" id="widthInput" oninput="handleDimensionChange('width')">
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="heightInput">Height (px)</label>
+                            <input type="number" id="heightInput" oninput="handleDimensionChange('height')">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="aspectRatio" checked onchange="toggleAspectRatio()">
+                        <label for="aspectRatio">Maintain Aspect Ratio</label>
+                    </div>
+
+                    <div class="presets">
+                        <button class="preset-btn" onclick="applyPreset(1920)">1920px (HD)</button>
+                        <button class="preset-btn" onclick="applyPreset(1280)">1280px (SD)</button>
+                        <button class="preset-btn" onclick="applyPreset(1080)">1080px (Insta)</button>
+                        <button class="preset-btn" onclick="applyPreset(800)">800px (Blog)</button>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <label for="formatSelect">Output Format</label>
+                            <select id="formatSelect">
+                                <option value="image/jpeg">JPG (Standard)</option>
+                                <option value="image/png">PNG (Lossless)</option>
+                                <option value="image/webp">WEBP (Modern)</option>
+                            </select>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="qualitySelect">Quality</label>
+                            <select id="qualitySelect">
+                                <option value="0.9">High (90%)</option>
+                                <option value="0.75" selected>Medium (75%)</option>
+                                <option value="0.5">Low (50%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn-action" id="resizeBtn" onclick="resizeImage()">
+                        <span id="btnText">Resize Image</span>
+                        <div class="spinner" id="spinner"></div>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div class="output-section" id="outputSection">
+                    <div class="success-title">Image Resized Successfully!</div>
+                    <div class="preview-container">
+                        <img id="resizedPreview" class="preview-img" alt="Resized Preview">
+                    </div>
+                    <div class="comparison">
+                        <div>Original: <span id="oldSize">0 KB</span></div>
+                        <div>Resized: <span id="newSize">0 KB</span></div>
+                    </div>
+                    <a href="#" id="downloadLink" class="btn-download" download="resized-image.jpg">Download Resized Image</a>
+                </div>
+            </div>
+
+            <!-- Right Sidebar Ad -->
+            <div class="ad-box ad-right"></div>
+        </div>
+
+        <!-- Bottom Ad -->
+        <div class="ad-box ad-bottom"></div>
+
+        <!-- Long Article Section -->
+        <div class="article-section">
+            <div class="article-content">
+                <h2>The Comprehensive Guide to Image Resizing in 2024</h2>
+                <p>In the digital ecosystem, visuals are the currency of engagement. From website headers and e-commerce product shots to Instagram stories and LinkedIn profile pictures, images dictate how we consume content. However, a raw image straight from a camera or a stock library is rarely ready for immediate publication. This is where image resizing becomes a fundamental skill—and why we built this free, privacy-focused Image Resizer Tool.</p>
+
+                <h3>What is Image Resizing?</h3>
+                <p>At its simplest, image resizing involves changing the pixel dimensions (width and height) of a digital image. Unlike cropping, which cuts out parts of the image, resizing scales the entire image up or down.</p>
+                <p><strong>Downscaling (Shrinking):</strong> This is the most common use case. You take a large photo (e.g., 4000x3000 pixels) and reduce it to fit a specific screen or container (e.g., 800x600 pixels). This reduces the file size significantly, making websites load faster.</p>
+                <p><strong>Upscaling (Enlarging):</strong> This involves making a small image larger. While possible, it often results in pixelation or blurriness because the computer has to "guess" the missing data between pixels.</p>
+
+                <h3>Why Does Image Size Matter?</h3>
+                <p>You might wonder, "Why not just upload the highest quality image I have?" While well-intentioned, this practice causes several issues:</p>
+                <ul>
+                    <li><strong>Website Speed & SEO:</strong> Search engines like Google prioritize fast-loading websites. If you upload a 5MB image to a blog post, it will slow down your page load time, frustrating users and potentially hurting your search rankings. Resizing that image to 100KB keeps the internet snappy.</li>
+                    <li><strong>Social Media Compatibility:</strong> Platforms have strict dimension requirements. A square profile picture on Instagram requires a 1:1 aspect ratio, while a YouTube thumbnail needs a 16:9 ratio. Uploading the wrong size often leads to awkward auto-cropping by the platform.</li>
+                    <li><strong>Email Attachments:</strong> Most email servers have a limit on attachment sizes (usually 25MB). Resizing photos allows you to send multiple high-quality images in a single email without bouncing back.</li>
+                </ul>
+
+                <h3>Understanding Aspect Ratio</h3>
+                <p>One of the key features of our tool is the "Maintain Aspect Ratio" checkbox. But what does that mean?</p>
+                <p>Aspect ratio is the proportional relationship between the width and height of an image. For example, a standard widescreen TV has an aspect ratio of 16:9. If you change the width of an image without changing the height proportionally, the image will look squashed or stretched. By locking the aspect ratio, our tool automatically calculates the correct height when you type a new width, ensuring your photo remains perfectly proportioned.</p>
+
+                <h3>How This Browser-Based Tool Works</h3>
+                <p>Many online image editors rely on server-side processing. This means you upload your photo to a remote computer, it processes the file, and then sends it back to you. While effective, this raises privacy concerns.</p>
+                
+                <p><strong>Our approach is different.</strong> We use the HTML5 Canvas API to process your images directly inside your web browser. Here is the technical breakdown:</p>
+                <ol>
+                    <li><strong>FileReader:</strong> When you select a file, your browser reads the data locally.</li>
+                    <li><strong>Canvas Drawing:</strong> The tool creates an invisible canvas element in your browser's memory and draws your image onto it at the desired dimensions.</li>
+                    <li><strong>Blob Generation:</strong> The canvas converts the visual data back into a file format (JPG, PNG, or WEBP) and creates a download link.</li>
+                </ol>
+                <p>Because everything happens on your device (Client-Side), your photos <strong>never leave your computer</strong>. This makes it safe to resize personal photos, confidential business documents, or sensitive data.</p>
+
+                <h3>JPG vs. PNG: Which Should You Choose?</h3>
+                <p>Our tool allows you to export in multiple formats. Here is a quick guide on which to pick:</p>
+                <ul>
+                    <li><strong>JPG (JPEG):</strong> Best for photographs and realistic images with many colors. It uses compression to keep file sizes low, which is ideal for websites.</li>
+                    <li><strong>PNG:</strong> Best for images with text, logos, or transparent backgrounds. It is "lossless," meaning it retains high quality but usually results in a larger file size.</li>
+                    <li><strong>WEBP:</strong> A modern format developed by Google that offers superior compression for the web, often providing high quality at smaller sizes than JPG.</li>
+                </ul>
+
+                <h3>Honest Limitations</h3>
+                <p>While browser-based resizing is powerful, it does have limits. Extremely large images (e.g., 100MB+ TIFF files or 50-megapixel raw photos) might exceed the memory limit of your specific web browser, causing the tab to crash. For standard web use—photos from smartphones, stock sites, or cameras—this tool is more than capable and often faster than opening Photoshop.</p>
+
+                <h3>Why Tool Baba Provides This for Free</h3>
+                <p>We believe essential digital tools should be accessible without barriers. Whether you are a student working on a presentation, a freelancer optimizing a portfolio, or a small business owner managing a website, you shouldn't need a monthly subscription just to resize a picture. This tool is ad-supported, allowing us to keep it free forever while covering our hosting costs.</p>
+
+                <h3>Conclusion</h3>
+                <p>Optimizing your images is one of the easiest wins for digital performance. By using this tool, you ensure your visuals look great on every device while respecting user data plans and loading speeds. Bookmark this page for your next project, and happy resizing!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const imageInput = document.getElementById('imageInput');
+        const controls = document.getElementById('controls');
+        const originalPreview = document.getElementById('originalPreview');
+        const originalMeta = document.getElementById('originalMeta');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const aspectRatioCheckbox = document.getElementById('aspectRatio');
+        const resizeBtn = document.getElementById('resizeBtn');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('spinner');
+        const outputSection = document.getElementById('outputSection');
+        const resizedPreview = document.getElementById('resizedPreview');
+        const oldSize = document.getElementById('oldSize');
+        const newSize = document.getElementById('newSize');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // State Variables
+        let originalImage = new Image();
+        let originalFile = null;
+        let aspectRatio = 0;
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            originalFile = file;
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                originalImage = new Image();
+                originalImage.onload = function() {
+                    // Show Controls
+                    controls.style.display = 'block';
+                    outputSection.style.display = 'none';
+                    
+                    // Set Preview
+                    originalPreview.src = e.target.result;
+                    
+                    // Set Meta Data
+                    originalMeta.textContent = `Original: ${originalImage.width} × ${originalImage.height} px | ${formatBytes(file.size)}`;
+                    
+                    // Set Inputs
+                    widthInput.value = originalImage.width;
+                    heightInput.value = originalImage.height;
+                    
+                    // Calculate Ratio
+                    aspectRatio = originalImage.width / originalImage.height;
+                };
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleDimensionChange(source) {
+            if (!aspectRatioCheckbox.checked) return;
+
+            if (source === 'width') {
+                const w = parseInt(widthInput.value);
+                if (!isNaN(w) && w > 0) {
+                    heightInput.value = Math.round(w / aspectRatio);
+                }
+            } else {
+                const h = parseInt(heightInput.value);
+                if (!isNaN(h) && h > 0) {
+                    widthInput.value = Math.round(h * aspectRatio);
+                }
+            }
+        }
+
+        function toggleAspectRatio() {
+            if (aspectRatioCheckbox.checked) {
+                // Re-sync height based on current width
+                handleDimensionChange('width');
+            }
+        }
+
+        function applyPreset(width) {
+            widthInput.value = width;
+            if (aspectRatioCheckbox.checked) {
+                heightInput.value = Math.round(width / aspectRatio);
+            }
+        }
+
+        function resizeImage() {
+            const width = parseInt(widthInput.value);
+            const height = parseInt(heightInput.value);
+            const format = document.getElementById('formatSelect').value;
+            const quality = parseFloat(document.getElementById('qualitySelect').value);
+
+            if (!width || !height || width <= 0 || height <= 0) {
+                alert("Please enter valid dimensions.");
+                return;
+            }
+
+            // UI Loading State
+            resizeBtn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+
+            // Use setTimeout to allow UI to update before heavy processing
+            setTimeout(() => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    // High Quality Scaling
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    ctx.drawImage(originalImage, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        // Handle Output
+                        const url = URL.createObjectURL(blob);
+                        resizedPreview.src = url;
+                        
+                        // Update Size Info
+                        oldSize.textContent = formatBytes(originalFile.size);
+                        newSize.textContent = formatBytes(blob.size);
+
+                        // Update Download Link
+                        let ext = 'jpg';
+                        if (format === 'image/png') ext = 'png';
+                        if (format === 'image/webp') ext = 'webp';
+
+                        downloadLink.href = url;
+                        downloadLink.download = `resized-image-${width}x${height}.${ext}`;
+
+                        // Show Section
+                        outputSection.style.display = 'block';
+                        outputSection.scrollIntoView({ behavior: 'smooth' });
+
+                        // Reset UI
+                        resizeBtn.disabled = false;
+                        btnText.style.display = 'inline';
+                        spinner.style.display = 'none';
+
+                    }, format, quality);
+
+                } catch (error) {
+                    console.error(error);
+                    alert("An error occurred while resizing. The image might be too large.");
+                    resizeBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    spinner.style.display = 'none';
+                }
+            }, 100);
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
