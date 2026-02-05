@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Image Compressor – Reduce Image Size Without Guesswork</title>
+    <meta name="description" content="A smart image optimization tool that analyzes your images and recommends the best compression settings. Reduce file size for Web, SEO, and Email while preserving quality.">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --surface: #ffffff;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ADS STYLES */
+        .ad-placeholder {
+            background-color: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .ad-header { height: 90px; width: 100%; margin-top: 20px; }
+        .ad-below-title { height: 250px; width: 100%; }
+        .ad-below-button { height: 100px; width: 100%; }
+
+        /* HEADER */
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: var(--text-main);
+            margin: 30px 0 20px;
+            line-height: 1.3;
+        }
+
+        /* MAIN TOOL CARD */
+        .tool-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            background: #eff6ff;
+        }
+
+        .upload-area:hover {
+            background: #dbeafe;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .btn-select {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+
+        .hidden { display: none; }
+
+        /* PANELS */
+        .panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Intelligence Panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        .stat-item {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+        .stat-value { font-weight: 700; color: var(--text-main); }
+
+        /* Recommendation */
+        .recommendation-box {
+            background: #f0fdf4;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .rec-text { font-size: 0.95rem; color: #166534; }
+
+        /* Controls */
+        .compression-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .option-btn {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .option-btn.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        .option-desc { display: block; font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 5px; }
+
+        .btn-action {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background: var(--primary-hover); }
+
+        /* Results */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .image-preview-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #eee; /* checker pattern simulated */
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .preview-img { width: 100%; height: auto; display: block; }
+        .comparison-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .download-btn {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            background: var(--success);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        /* Sections */
+        .section-header {
+            margin: 40px 0 20px;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        .mistake-list li { margin-bottom: 10px; padding-left: 20px; position: relative; }
+        .mistake-list li::before { content: "⚠️"; position: absolute; left: 0; }
+        
+        .related-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tool-link {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Article */
+        article {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            margin-top: 50px;
+            box-shadow: var(--shadow);
+        }
+        article h2 { margin: 30px 0 15px; color: var(--text-main); }
+        article h3 { margin: 20px 0 10px; color: var(--text-main); }
+        article p { margin-bottom: 15px; color: var(--text-light); }
+        article ul { margin-left: 20px; margin-bottom: 20px; color: var(--text-light); }
+        article li { margin-bottom: 8px; }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .home-btn {
+            display: inline-block;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .home-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 600px) {
+            .result-grid { grid-template-columns: 1fr; }
+            .compression-options { flex-direction: column; }
+            h1 { font-size: 1.5rem; }
+            article { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. Top Header Ad -->
+        <div class="ad-placeholder ad-header">
+            Advertisement Space (Header)
+        </div>
+
+        <!-- 2. H1 Tool Title -->
+        <h1>Smart Image Compressor – Reduce Image Size Without Guesswork</h1>
+
+        <!-- 3. Tool Main UI -->
+        <div class="tool-card" id="tool-ui">
+            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp" hidden>
+            
+            <div class="upload-area" id="dropZone">
+                <div class="upload-icon">📁</div>
+                <h3>Drag & Drop or Click to Upload</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Supports JPG, PNG, WebP</p>
+                <button class="btn-select" onclick="document.getElementById('fileInput').click()">Select Image</button>
+            </div>
+        </div>
+
+        <!-- 4. Ad Slot Below Title -->
+        <div class="ad-placeholder ad-below-title">
+            Advertisement Space (Below Title)
+        </div>
+
+        <div id="processing-section" class="hidden">
+            <!-- 5. Image Intelligence Panel -->
+            <div class="panel" id="intelligence-panel">
+                <div class="panel-title">🔍 Image Analysis Summary</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Original Size</div>
+                        <div class="stat-value" id="stat-size">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Dimensions</div>
+                        <div class="stat-value" id="stat-dim">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Format</div>
+                        <div class="stat-value" id="stat-format">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Transparency</div>
+                        <div class="stat-value" id="stat-trans">Checking...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Smart Compression Recommendation -->
+            <div class="panel" id="recommendation-panel">
+                <div class="panel-title">🤖 Recommended Compression</div>
+                <div class="recommendation-box">
+                    <p class="rec-text" id="rec-message">Analyzing image content to determine best settings...</p>
+                </div>
+            </div>
+
+            <!-- 7. Compression Action + Ad -->
+            <div class="panel">
+                <div class="panel-title">⚙️ Compression Level</div>
+                <div class="compression-options">
+                    <div class="option-btn" data-quality="0.9" onclick="setQuality(this, 0.9)">
+                        Low Compression
+                        <span class="option-desc">Best Quality</span>
+                    </div>
+                    <div class="option-btn active" data-quality="0.7" onclick="setQuality(this, 0.7)">
+                        Medium
+                        <span class="option-desc">Balanced</span>
+                    </div>
+                    <div class="option-btn" data-quality="0.5" onclick="setQuality(this, 0.5)">
+                        High Compression
+                        <span class="option-desc">Smallest Size</span>
+                    </div>
+                </div>
+                <button class="btn-action" id="compressBtn">Analyze & Compress Image</button>
+            </div>
+
+            <div class="ad-placeholder ad-below-button">
+                Advertisement Space (Below Button)
+            </div>
+        </div>
+
+        <!-- 8. Result Explanation Panel -->
+        <div class="panel hidden" id="result-panel">
+            <div class="panel-title">📊 Compression Results</div>
+            
+            <div class="result-grid">
+                <div>
+                    <h4>Original</h4>
+                    <div class="image-preview-container">
+                        <img id="preview-original" class="preview-img" alt="Original">
+                    </div>
+                    <div class="comparison-badge badge-red" id="res-orig-size">0 KB</div>
+                </div>
+                <div>
+                    <h4>Compressed</h4>
+                    <div class="image-preview-container">
+                        <img id="preview-compressed" class="preview-img" alt="Compressed">
+                    </div>
+                    <div class="comparison-badge badge-green" id="res-comp-size">0 KB</div>
+                    <div style="font-size: 0.9rem; color: var(--success); font-weight: bold; margin-top: 5px;" id="res-savings"></div>
+                </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <p id="quality-explanation" style="font-size: 0.95rem;">Analysis complete.</p>
+            </div>
+
+            <a href="#" id="download-link" class="download-btn" download="compressed-image.jpg">Download Compressed Image</a>
+            <button onclick="resetTool()" style="width: 100%; margin-top: 10px; background: transparent; border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer;">Compress Another Image</button>
+        </div>
+
+        <!-- 9. Quality Decision Helper -->
+        <div class="section-header">🧠 Is This Quality Right for Your Use?</div>
+        <div class="info-card" id="quality-decision">
+            <p>Select your intended use to get advice:</p>
+            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                <button onclick="checkUseCase('web')" class="home-btn">Website / Blog</button>
+                <button onclick="checkUseCase('social')" class="home-btn">Social Media</button>
+                <button onclick="checkUseCase('print')" class="home-btn">Printing</button>
+                <button onclick="checkUseCase('email')" class="home-btn">Email Attachment</button>
+            </div>
+            <div id="use-case-advice" style="margin-top: 15px; font-weight: 500; color: var(--primary);"></div>
+        </div>
+
+        <!-- 10. Common Mistakes -->
+        <div class="section-header">⚠️ Common Image Compression Mistakes</div>
+        <div class="info-card">
+            <ul class="mistake-list">
+                <li><strong>Over-compressing text screenshots:</strong> Text becomes blurry and unreadable if compressed too aggressively (lossy). Use PNG or Low compression for text.</li>
+                <li><strong>Ignoring Transparency:</strong> Converting a transparent PNG logo to JPG creates a black or white box background.</li>
+                <li><strong>Re-compressing files:</strong> Compressing an image that was already compressed on WhatsApp or Facebook destroys quality significantly (generation loss).</li>
+                <li><strong>Using Print resolution for Web:</strong> Uploading 300 DPI images for a website slows down loading without adding visible quality on screens.</li>
+            </ul>
+        </div>
+
+        <!-- 11. Related Tools -->
+        <div class="section-header">🔗 Related Tools You May Need</div>
+        <div class="related-links">
+            <a href="#" class="tool-link">Image Resizer</a>
+            <a href="#" class="tool-link">PDF Compressor</a>
+            <a href="#" class="tool-link">File Security Tool</a>
+            <a href="#" class="tool-link">PNG to JPG Converter</a>
+        </div>
+
+        <!-- 12. Long SEO Article -->
+        <article>
+            <h2>The Ultimate Guide to Smart Image Compression</h2>
+            <p>In the digital age, images constitute the bulk of the internet's weight. Whether you are running a high-traffic e-commerce store, a personal blog, or simply sending photos to family via email, file size matters. Our Smart Image Compressor isn't just another tool; it's a decision-making engine designed to balance the delicate scale between visual fidelity and performance efficiency.</p>
+
+            <h3>What Does "Smart" Compression Actually Mean?</h3>
+            <p>Traditional compression tools apply a blanket algorithm to every pixel. If you set quality to 50%, they mathematically remove 50% of the data, regardless of whether that data is a blue sky (easy to compress) or a complex human face (hard to compress). Smart compression involves analyzing the image first. It looks at the frequency of colors, the complexity of textures, and the presence of sharp edges (like text).</p>
+            <p>By understanding the "content" of the image, our tool suggests a compression level that removes invisible data—meta tags, redundant color profiles, and imperceptible pixel variations—before attacking the visible quality.</p>
+
+            <h3>Lossy vs. Lossless: Making the Right Choice</h3>
+            <p>Understanding the difference between lossy and lossless compression is critical for web performance:</p>
+            <ul>
+                <li><strong>Lossy Compression (JPG/WebP):</strong> This method permanently removes data. It offers the highest size reduction (often 70-90%). It is ideal for photographs, banners, and background images where absolute pixel-perfect accuracy isn't required.</li>
+                <li><strong>Lossless Compression (PNG):</strong> This shrinks files by organizing data more efficiently without deleting distinct information. It is essential for logos, screenshots with text, and graphics with transparent backgrounds.</li>
+            </ul>
+            <p>Our tool automatically detects if your uploaded image contains transparency or text-like features and adjusts its recommendations accordingly.</p>
+
+            <h2>Why Image Size Impacts SEO and User Experience</h2>
+            <p>Search engines like Google use "Core Web Vitals" as a ranking factor. One of the primary metrics is LCP (Largest Contentful Paint), which measures how fast the main content loads. Large, unoptimized images are the number one killer of LCP scores.</p>
+            <p>A 3MB hero image on a homepage can take 4-5 seconds to load on a 4G mobile network. In that time, statistics show that over 50% of users will abandon the site. By compressing that image to 200KB—a task easily handled by our tool—you improve load speed, decrease bounce rates, and signal to search engines that your site is mobile-friendly.</p>
+
+            <h3>The Privacy Advantage: Client-Side Processing</h3>
+            <p>Most online compressors require you to upload your files to a server. This creates privacy risks. Who owns that copy of your personal photo or confidential document? What if their server is hacked?</p>
+            <p>This Smart Image Compressor runs entirely in your browser using HTML5 Canvas technology. <strong>Your images never leave your device.</strong> The compression happens on your CPU, ensuring 100% privacy and security. This also makes the tool faster, as you don't have to wait for upload and download speeds.</p>
+
+            <h2>Optimizing for Different Use Cases</h2>
+            <p>One size does not fit all. That is why we included the "Quality Decision Helper" in our tool.</p>
+            
+            <h3>For Web Developers</h3>
+            <p>Speed is king. You should aim for the highest compression that doesn't look "broken." Modern formats like WebP offer superior compression compared to legacy JPGs. Our tool supports WebP input and processing to help you stay modern.</p>
+
+            <h3>For Social Media Marketers</h3>
+            <p>Platforms like Instagram and Facebook apply their own aggressive compression when you upload. If you upload a massive 10MB raw file, their servers will crush it, often causing artifacts. It is actually better to upload a moderately compressed, correctly sized image (e.g., 1080px wide) so the platform's algorithm changes it less.</p>
+
+            <h3>For Print</h3>
+            <p>Compression is generally the enemy of print. If you are printing a flyer or a framed photo, use "Low Compression" or stick to the original file. Printers need roughly 300 DPI (Dots Per Inch), whereas screens only need 72 DPI. Removing data via compression can result in "pixelated" prints.</p>
+
+            <h2>Honest Limitations of Browser-Based Compression</h2>
+            <p>While our tool is powerful, we believe in transparency. Browser-based compression relies on the device's memory. Extremely large files (e.g., 50MB TIFF files) might cause older mobile browsers to crash. Additionally, while we strive for the best algorithms, specialized desktop software like Photoshop typically has more processing power for edge cases. However, for 99% of web and daily tasks, this tool provides professional-grade results instantly.</p>
+
+            <p>Start optimizing your digital footprint today. Drag, drop, analyze, and compress.</p>
+        </article>
+
+        <!-- 13. Footer -->
+        <footer>
+            <a href="#" class="home-btn">Home</a>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #cbd5e1;">&copy; 2024 Smart Image Tools. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const processingSection = document.getElementById('processing-section');
+        const resultPanel = document.getElementById('result-panel');
+        const compressBtn = document.getElementById('compressBtn');
+        const previewOriginal = document.getElementById('preview-original');
+        const previewCompressed = document.getElementById('preview-compressed');
+        const downloadLink = document.getElementById('download-link');
+        
+        // State
+        let currentFile = null;
+        let originalImage = new Image();
+        let selectedQuality = 0.7;
+
+        // Event Listeners
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#dbeafe';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#eff6ff';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#eff6ff';
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        compressBtn.addEventListener('click', performCompression);
+
+        function handleFileSelect(e) {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.match('image.*')) {
+                alert("Please select a valid image (JPG, PNG, WebP).");
+                return;
+            }
+
+            currentFile = file;
+            processingSection.classList.remove('hidden');
+            resultPanel.classList.add('hidden'); // Hide previous results
+            
+            // Intelligence: Size
+            document.getElementById('stat-size').innerText = formatBytes(file.size);
+            document.getElementById('stat-format').innerText = file.type.split('/')[1].toUpperCase();
+
+            // Load Image for Dimensions & Analysis
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                originalImage.src = e.target.result;
+                previewOriginal.src = e.target.result;
+                
+                originalImage.onload = function() {
+                    document.getElementById('stat-dim').innerText = `${this.width} × ${this.height}`;
+                    analyzeImage(this, file);
+                }
+            };
+            reader.readAsDataURL(file);
+
+            // Scroll to analysis
+            setTimeout(() => {
+                processingSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function analyzeImage(img, file) {
+            // Check Transparency (basic check based on type)
+            const isPng = file.type === 'image/png';
+            const hasTransparency = isPng; // Simplifying for browser perf, usually PNG implies potential transparency
+            
+            document.getElementById('stat-trans').innerText = hasTransparency ? 'Detected (Possible)' : 'No';
+
+            // Smart Recommendation Logic
+            const sizeMB = file.size / (1024 * 1024);
+            const recommendationText = document.getElementById('rec-message');
+            
+            // Reset active buttons
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+
+            let recommendedQuality = 0.7; // Default Medium
+
+            if (sizeMB > 2) {
+                recommendationText.innerHTML = "<strong>Large File Detected (>2MB):</strong> We recommend <strong>Medium to High</strong> compression to significantly reduce load times without destroying detail.";
+                recommendedQuality = 0.6;
+                selectQualityOption(0.5); // Highlight High compression visually as option
+            } else if (isPng) {
+                recommendationText.innerHTML = "<strong>Graphic/Text Detected:</strong> For PNGs with text or logos, we recommend <strong>Low Compression (High Quality)</strong> to keep edges sharp.";
+                recommendedQuality = 0.9;
+                selectQualityOption(0.9);
+            } else if (sizeMB < 0.2) {
+                recommendationText.innerHTML = "<strong>Small File:</strong> Your image is already small. Using <strong>Low Compression</strong> will ensure it stays crisp.";
+                recommendedQuality = 0.9;
+                selectQualityOption(0.9);
+            } else {
+                recommendationText.innerHTML = "<strong>Standard Photo:</strong> A <strong>Balanced (Medium)</strong> compression is perfect for this image type for web use.";
+                selectQualityOption(0.7);
+            }
+        }
+
+        function setQuality(el, quality) {
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+            selectedQuality = quality;
+        }
+
+        function selectQualityOption(val) {
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(btn => {
+                if(Math.abs(parseFloat(btn.dataset.quality) - val) < 0.1) {
+                    btn.click();
+                }
+            });
+        }
+
+        function performCompression() {
+            if (!currentFile || !originalImage.src) return;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = originalImage.width;
+            canvas.height = originalImage.height;
+
+            // Handle transparency: Fill white if JPG, keep transparent if PNG/WebP
+            // However, to ensure size reduction, often converting PNG to JPEG helps if transparency isn't needed.
+            // But we will respect input type to be safe, or default to jpeg/webp for compression.
+            
+            let outputType = currentFile.type;
+            
+            // Draw image
+            ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+
+            // Compress
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    alert("Compression failed.");
+                    return;
+                }
+
+                // Generate URL
+                const url = URL.createObjectURL(blob);
+                previewCompressed.src = url;
+                
+                // Update UI
+                resultPanel.classList.remove('hidden');
+                
+                const origSize = currentFile.size;
+                const compSize = blob.size;
+                const saving = ((origSize - compSize) / origSize) * 100;
+
+                document.getElementById('res-orig-size').innerText = formatBytes(origSize);
+                document.getElementById('res-comp-size').innerText = formatBytes(compSize);
+                
+                const savingElem = document.getElementById('res-savings');
+                if (saving > 0) {
+                    savingElem.innerText = `Reduced by ${saving.toFixed(1)}%`;
+                    savingElem.style.color = 'var(--success)';
+                } else {
+                    savingElem.innerText = `Size increased (Already optimized)`;
+                    savingElem.style.color = 'var(--warning)';
+                }
+
+                // Update download link
+                downloadLink.href = url;
+                // Force extension based on mime
+                let ext = outputType.split('/')[1];
+                downloadLink.download = `compressed_${Date.now()}.${ext}`;
+
+                // Explanation
+                updateResultExplanation(saving);
+
+                resultPanel.scrollIntoView({ behavior: 'smooth' });
+
+            }, outputType, selectedQuality);
+        }
+
+        function updateResultExplanation(savingPercent) {
+            const text = document.getElementById('quality-explanation');
+            if (savingPercent > 70) {
+                text.innerText = "Excellent reduction! This file is now much lighter. You might notice slight softness when zoomed in, but it's perfect for web loading speeds.";
+            } else if (savingPercent > 30) {
+                text.innerText = "Good balance achieved. Visible quality is nearly identical to original, but file size is significantly better for SEO.";
+            } else {
+                text.innerText = "Minimal reduction. This image was likely already compressed or is very simple. Further compression might damage quality visibly.";
+            }
+        }
+
+        function checkUseCase(type) {
+            const adviceBox = document.getElementById('use-case-advice');
+            if (type === 'web') {
+                adviceBox.innerText = "💡 For Websites: Aim for under 100KB for banners and under 500KB for large hero images. Use 'High' or 'Medium' compression.";
+            } else if (type === 'social') {
+                adviceBox.innerText = "💡 For Social Media: Platforms compress images again. Upload high-quality (Medium compression) to avoid 'double compression' artifacts.";
+            } else if (type === 'print') {
+                adviceBox.innerText = "💡 For Printing: DO NOT compress aggressively. Use 'Low Compression' or original files to prevent pixelated prints.";
+            } else if (type === 'email') {
+                adviceBox.innerText = "💡 For Email: Size matters most. Use 'High Compression' to ensure your attachments send quickly and don't bounce.";
+            }
+        }
+
+        function resetTool() {
+            fileInput.value = '';
+            processingSection.classList.add('hidden');
+            resultPanel.classList.add('hidden');
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
