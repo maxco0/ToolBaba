@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/SoftwareApplication">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO CORE -->
+    <title>File Security Tool – Lock Any File with Password (AES Encryption)</title>
+    <meta name="description" content="Free online file security tool. Encrypt and lock documents, images, and PDFs with a password. 100% client-side AES encryption. No server uploads.">
+    <meta name="keywords" content="file security, password protect file, encrypt pdf, secure file transfer, client side encryption, lock file online">
+    <meta name="author" content="SecureFileTool">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourwebsite.com/file-security.html">
+
+    <!-- OPEN GRAPH (Social Media) -->
+    <meta property="og:title" content="File Security Tool – Lock Any File">
+    <meta property="og:description" content="Secure your sensitive files with military-grade AES encryption directly in your browser.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/file-security.html">
+    <meta property="og:image" content="https://yourwebsite.com/secure-icon.png">
+
+    <!-- SCHEMA MARKUP (Google Rich Snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "File Security Tool",
+      "applicationCategory": "SecurityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A browser-based tool to encrypt and password-protect any file type using AES-GCM encryption."
+    }
+    </script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); line-height: 1.6; padding-bottom: 60px; }
+
+        /* UTILITIES */
+        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        
+        /* ADS */
+        .ad-slot { background: #f1f5f9; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 600; border-radius: 8px; margin: 25px 0; overflow: hidden; }
+        .ad-header { height: 90px; width: 100%; }
+        .ad-below-title { height: 250px; width: 100%; max-width: 300px; margin: 20px auto; }
+        .ad-below-button { height: 250px; width: 100%; }
+
+        /* TYPOGRAPHY */
+        h1 { font-size: 2.2rem; font-weight: 800; color: var(--text-dark); margin: 20px 0; letter-spacing: -0.5px; text-align: center; }
+        h2 { font-size: 1.8rem; margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+        p { margin-bottom: 15px; color: var(--text-gray); }
+
+        /* MAIN CARD */
+        .tool-card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); border: 1px solid var(--border); }
+
+        /* UPLOAD ZONE (FIXED) */
+        .upload-zone {
+            border: 3px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: #eff6ff; transform: translateY(-2px); }
+        .upload-icon { font-size: 48px; color: var(--primary); margin-bottom: 10px; display: block; }
+        .upload-text { font-size: 1.1rem; font-weight: 600; color: var(--text-dark); }
+        .upload-sub { font-size: 0.9rem; color: var(--text-gray); }
+
+        /* ANALYSIS PANEL */
+        .analysis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
+        .stat-item { text-align: center; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-gray); letter-spacing: 0.5px; }
+        .stat-value { font-weight: 700; color: var(--text-dark); font-size: 1rem; }
+        .risk-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+        .risk-low { background: #dcfce7; color: #166534; }
+        .risk-high { background: #fee2e2; color: #991b1b; }
+
+        /* INPUTS */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+        input[type="password"] { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+        input[type="password"]:focus { outline: none; border-color: var(--primary); }
+
+        /* PASSWORD METER */
+        .meter-bg { height: 6px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .meter-fill { height: 100%; width: 0%; transition: width 0.3s ease, background 0.3s ease; }
+        .meter-text { font-size: 0.85rem; margin-top: 5px; text-align: right; font-weight: 500; }
+
+        /* BUTTON */
+        .btn-action {
+            width: 100%; background: var(--primary); color: white; border: none; padding: 16px;
+            font-size: 1.1rem; font-weight: 700; border-radius: 8px; cursor: pointer;
+            transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+        .btn-action:hover { background: var(--primary-hover); }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+        /* CHIPS */
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .chip { padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+        .chip:hover, .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .advice-box { margin-top: 15px; padding: 15px; background: #ecfdf5; border: 1px solid var(--success); border-radius: 8px; color: #064e3b; font-size: 0.95rem; display: none; }
+
+        /* ARTICLE */
+        article { background: white; padding: 30px; border-radius: 16px; border: 1px solid var(--border); margin-top: 30px; }
+        article ul { padding-left: 20px; margin-bottom: 20px; }
+        article li { margin-bottom: 10px; color: var(--text-gray); }
+
+        /* FOOTER */
+        footer { margin-top: 50px; text-align: center; border-top: 1px solid var(--border); padding-top: 30px; }
+        .home-btn { display: inline-block; text-decoration: none; color: var(--text-dark); font-weight: 600; padding: 10px 24px; border: 1px solid var(--border); border-radius: 6px; background: white; transition: all 0.2s; }
+        .home-btn:hover { background: #f1f5f9; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Top Header Ad -->
+    <div class="container">
+        <div class="ad-slot ad-header">Ad Space (Header)</div>
+    </div>
+
+    <!-- 2. H1 Tool Title -->
+    <div class="container">
+        <h1>File Security Tool – Lock Any File into a Secure Capsule</h1>
+    </div>
+
+    <!-- 3. Tool Main UI -->
+    <div class="container">
+        <div class="tool-card">
+            
+            <!-- FILE INPUT (FIXED LOGIC) -->
+            <div class="form-group">
+                <label>1. Select File to Protect</label>
+                <!-- The onclick here ensures the hidden input is triggered -->
+                <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <span class="upload-icon">🔒</span>
+                    <div class="upload-text">Click to Upload or Drag & Drop</div>
+                    <div class="upload-sub">Supports Images, PDF, Docs, Text</div>
+                    <!-- Input MUST be display:none, not hidden attribute for max compatibility -->
+                    <input type="file" id="fileInput" style="display: none;">
+                </div>
+            </div>
+
+            <!-- 4. Ad Slot Below Title -->
+            <div class="ad-slot ad-below-title">Ad Space (Square)</div>
+
+            <!-- 5. File Security Analysis Panel -->
+            <div id="analysisPanel" class="hidden">
+                <h3>📊 File Security Overview</h3>
+                <div class="analysis-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Name</div>
+                        <div class="stat-value" id="fileName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Size</div>
+                        <div class="stat-value" id="fileSize">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Type</div>
+                        <div class="stat-value" id="fileType">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Risk</div>
+                        <div class="stat-value"><span id="riskBadge" class="risk-badge">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Password Strength & Recommendation -->
+            <div id="passwordSection" class="hidden mt-20">
+                <div class="form-group">
+                    <label>2. Set Encryption Password</label>
+                    <input type="password" id="password" placeholder="Enter a strong password">
+                    <div class="meter-bg"><div class="meter-fill" id="meterFill"></div></div>
+                    <div class="meter-text" id="meterText">Strength: None</div>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" placeholder="Confirm password">
+                </div>
+
+                <!-- Feature: Smart Guidance -->
+                <div style="background: #eff6ff; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 4px;">🧠 AI Recommendation</h4>
+                    <p class="text-sm" id="recommendationText" style="margin:0; font-size: 0.85rem;">Select a file to see security advice.</p>
+                </div>
+            </div>
+
+            <!-- 7. Lock Action -->
+            <div class="mt-20">
+                <button id="lockBtn" class="btn-action" disabled>
+                    <span>🔒 Encrypt & Download Secure File</span>
+                </button>
+                <p id="statusMsg" class="text-center" style="margin-top: 10px; font-weight: 600; font-size: 0.9rem;"></p>
+            </div>
+
+            <div class="ad-slot ad-below-button">Ad Space (Rectangle)</div>
+        </div>
+    </div>
+
+    <!-- 8. Security Explanation Panel -->
+    <div class="container">
+        <div class="tool-card">
+            <h3>📘 How This Security Works</h3>
+            <p>We use <strong>AES-GCM (Advanced Encryption Standard)</strong>, the same technology used by banks and military organizations.</p>
+            <ul>
+                <li><strong>Client-Side Only:</strong> Your file never leaves your browser. It is encrypted in your device's RAM.</li>
+                <li><strong>Secure Capsule:</strong> We generate a self-decrypting HTML file. You don't need special software to open it—just a browser and your password.</li>
+                <li><strong>Zero Knowledge:</strong> We don't know your password. If you lose it, the file is lost forever.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 9. Use-Case Decision Helper -->
+    <div class="container">
+        <div class="tool-card">
+            <h3>🧠 Is This Secure Enough?</h3>
+            <p>Select your use case for honest advice:</p>
+            <div class="chips">
+                <div class="chip" onclick="showAdvice('email', this)">Email Sharing</div>
+                <div class="chip" onclick="showAdvice('cloud', this)">Cloud Storage</div>
+                <div class="chip" onclick="showAdvice('legal', this)">Legal Docs</div>
+                <div class="chip" onclick="showAdvice('usb', this)">USB Drive</div>
+            </div>
+            <div id="adviceBox" class="advice-box"></div>
+        </div>
+    </div>
+
+    <!-- 10. Common Security Mistakes -->
+    <div class="container">
+        <div class="tool-card" style="border-left: 5px solid var(--danger);">
+            <h3>⚠️ Common Security Mistakes</h3>
+            <ul>
+                <li><strong>Weak Passwords:</strong> "123456" takes 0.1 seconds to crack. Use at least 10 characters.</li>
+                <li><strong>Sharing Channels:</strong> Never send the password in the same email as the locked file. Use SMS or WhatsApp for the password.</li>
+                <li><strong>Renaming Files:</strong> Changing the file extension does not lock a file. Only encryption locks it.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 11. Related Tools -->
+    <div class="container">
+        <div class="tool-card">
+            <h3>🔗 Related Tools</h3>
+            <div class="chips">
+                <span class="chip">PDF Compressor</span>
+                <span class="chip">Image to PDF</span>
+                <span class="chip">Secure Notes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Long SEO Article -->
+    <div class="container">
+        <article>
+            <h2>Complete Guide to Browser-Based File Encryption</h2>
+            
+            <p>In an era of increasing cyber threats, securing your digital assets is non-negotiable. Whether you are protecting financial records, personal photos, or confidential business contracts, the <strong>File Security Tool</strong> offers a robust, free, and private solution. Unlike server-based tools that require you to upload your data (risking interception), our tool performs all encryption locally on your device.</p>
+
+            <h3>What is AES Encryption?</h3>
+            <p>AES (Advanced Encryption Standard) is a symmetric block cipher chosen by the U.S. government to protect classified information. This tool uses <strong>AES-GCM</strong>, a mode that provides both data confidentiality (encryption) and integrity (ensuring the file hasn't been tampered with). When you lock a file here, it is mathematically scrambled into a format that is impossible to read without the exact password key.</p>
+
+            <h3>Why Use a Secure HTML Capsule?</h3>
+            <p>Many users ask for "Password Protected PDFs". While PDFs are great, standard PDF encryption has known vulnerabilities and compatibility issues. Our tool generates a <strong>Secure HTML Capsule</strong>. This is a standalone file that contains your encrypted data inside it. To open it, you simply double-click the file, and it opens in your browser (Chrome, Edge, Safari) prompting for a password. Once unlocked, your original file (PDF, JPG, DOCX) is instantly restored.</p>
+
+            <h3>Top Benefits of Client-Side Security</h3>
+            <ul>
+                <li><strong>Privacy:</strong> No server logs. No data uploads. You are the only one who holds the file.</li>
+                <li><strong>Speed:</strong> Encryption happens instantly using your computer's processing power.</li>
+                <li><strong>Availability:</strong> Works offline. Once the tool is loaded, you don't need internet to lock files.</li>
+            </ul>
+
+            <h3>Best Practices for File Passwords</h3>
+            <p>The strength of your encryption is only as good as your password. A brute-force attack attempts every possible combination of characters. To prevent this, ensure your password is at least 12 characters long, includes numbers, symbols, and mixed-case letters. Avoid common words or birthdays.</p>
+        </article>
+    </div>
+
+    <!-- 13. Footer -->
+    <footer>
+        <div class="container">
+            <a href="#" class="home-btn">Home</a>
+            <p class="mt-20" style="font-size: 0.85rem; color: var(--text-gray);">&copy; 2024 File Security Tool. 100% Secure Client-Side Encryption.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DOM ELEMENTS
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const analysisPanel = document.getElementById('analysisPanel');
+        const passwordSection = document.getElementById('passwordSection');
+        const lockBtn = document.getElementById('lockBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        
+        // Stats Elements
+        const fileNameEl = document.getElementById('fileName');
+        const fileSizeEl = document.getElementById('fileSize');
+        const fileTypeEl = document.getElementById('fileType');
+        const riskBadge = document.getElementById('riskBadge');
+        const recText = document.getElementById('recommendationText');
+
+        // Password Elements
+        const passInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirmPassword');
+        const meterFill = document.getElementById('meterFill');
+        const meterText = document.getElementById('meterText');
+
+        let selectedFile = null;
+
+        // --- 1. ROBUST FILE UPLOAD LOGIC ---
+        
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        // Handle Drop
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length) handleFiles(files[0]);
+        });
+
+        // Handle Click (via Input Change)
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) handleFiles(this.files[0]);
+        });
+
+        function handleFiles(file) {
+            selectedFile = file;
+            
+            // Show UI
+            analysisPanel.classList.remove('hidden');
+            passwordSection.classList.remove('hidden');
+            
+            // Update Stats
+            fileNameEl.textContent = file.name;
+            fileSizeEl.textContent = formatBytes(file.size);
+            fileTypeEl.textContent = file.type.split('/')[1]?.toUpperCase() || 'FILE';
+            
+            // Risk Logic
+            const isHighRisk = file.size > 5 * 1024 * 1024 || file.type.includes('pdf') || file.type.includes('word');
+            riskBadge.textContent = isHighRisk ? 'HIGH SENSITIVITY' : 'STANDARD';
+            riskBadge.className = isHighRisk ? 'risk-badge risk-high' : 'risk-badge risk-low';
+            
+            recText.innerHTML = isHighRisk 
+                ? "<strong>Recommendation:</strong> This file is large or sensitive. Use a password with 12+ characters and symbols."
+                : "<strong>Recommendation:</strong> A standard 8-character alphanumeric password is sufficient.";
+
+            validateForm();
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // --- 2. PASSWORD STRENGTH LOGIC ---
+        passInput.addEventListener('input', updateMeter);
+        confirmInput.addEventListener('input', validateForm);
+
+        function updateMeter() {
+            const val = passInput.value;
+            let score = 0;
+            if (val.length > 5) score++;
+            if (val.length > 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#10b981'];
+            const texts = ['Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'];
+            
+            const idx = Math.min(score, 4);
+            meterFill.style.width = `${(idx + 1) * 20}%`;
+            meterFill.style.background = colors[idx];
+            meterText.textContent = `Strength: ${texts[idx]}`;
+            
+            validateForm();
+        }
+
+        function validateForm() {
+            const p1 = passInput.value;
+            const p2 = confirmInput.value;
+            
+            if (selectedFile && p1 && p2 && p1 === p2) {
+                lockBtn.disabled = false;
+                lockBtn.innerHTML = `<span>🔒 Encrypt & Download Secure File</span>`;
+            } else {
+                lockBtn.disabled = true;
+                if (p1 && p2 && p1 !== p2) {
+                    lockBtn.innerHTML = `<span>Passwords do not match</span>`;
+                } else {
+                    lockBtn.innerHTML = `<span>🔒 Encrypt & Download Secure File</span>`;
+                }
+            }
+        }
+
+        // --- 3. ADVICE LOGIC ---
+        window.showAdvice = function(type, el) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            const box = document.getElementById('adviceBox');
+            box.style.display = 'block';
+            
+            const msgs = {
+                email: "For Email: This tool is perfect. The file is encrypted before attachment. Send the password via a different app (like WhatsApp).",
+                cloud: "For Cloud: Uploading the encrypted file ensures that even if your Google Drive/Dropbox is hacked, your file remains safe.",
+                legal: "For Legal: AES-GCM encryption is compliant with most data protection regulations.",
+                usb: "For USB: If you lose the USB drive, no one can access your files without the password."
+            };
+            box.textContent = msgs[type];
+        }
+
+        // --- 4. CORE ENCRYPTION LOGIC (AES-GCM) ---
+        lockBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            lockBtn.disabled = true;
+            statusMsg.textContent = "Reading file...";
+            statusMsg.style.color = "var(--text-dark)";
+
+            try {
+                // 1. Read File
+                const fileData = await readFile(selectedFile);
+                
+                // 2. Encrypt
+                statusMsg.textContent = "Encrypting with AES-GCM...";
+                const password = passInput.value;
+                const { encryptedData, salt, iv } = await encryptData(fileData, password);
+                
+                // 3. Generate Capsule
+                statusMsg.textContent = "Generating Secure Capsule...";
+                const capsuleBlob = generateCapsule(selectedFile.name, selectedFile.type, encryptedData, salt, iv);
+                
+                // 4. Download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(capsuleBlob);
+                link.download = `SECURE-${selectedFile.name}.html`; // HTML Capsule is the only 100% working method
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                statusMsg.textContent = "Success! File Encrypted & Downloaded.";
+                statusMsg.style.color = "var(--success)";
+                lockBtn.disabled = false;
+
+            } catch (e) {
+                console.error(e);
+                statusMsg.textContent = "Error: " + e.message;
+                statusMsg.style.color = "var(--danger)";
+                lockBtn.disabled = false;
+            }
+        });
+
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]); // Get Base64 part
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function encryptData(base64Data, password) {
+            const enc = new TextEncoder();
+            const salt = window.crypto.getRandomValues(new Uint8Array(16));
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            
+            const keyMaterial = await window.crypto.subtle.importKey(
+                "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+            );
+            
+            const key = await window.crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                keyMaterial, { name: "AES-GCM", length: 256 }, true, ["encrypt"]
+            );
+            
+            const encryptedContent = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv }, key, enc.encode(base64Data)
+            );
+
+            return {
+                encryptedData: arrayBufferToBase64(encryptedContent),
+                salt: arrayBufferToBase64(salt),
+                iv: arrayBufferToBase64(iv)
+            };
+        }
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+            return window.btoa(binary);
+        }
+
+        // --- 5. SECURE CAPSULE GENERATOR ---
+        function generateCapsule(filename, mimeType, data, salt, iv) {
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔒 Locked File: ${filename}</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#1f2937;padding:2rem;border-radius:1rem;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);width:100%;max-width:400px;text-align:center;border:1px solid #374151}
+h1{font-size:1.5rem;margin-bottom:0.5rem}
+p{color:#9ca3af;margin-bottom:1.5rem;font-size:0.9rem}
+input{width:100%;padding:0.75rem;border-radius:0.5rem;border:1px solid #374151;background:#374151;color:white;margin-bottom:1rem;box-sizing:border-box}
+button{width:100%;padding:0.75rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-weight:bold;cursor:pointer}
+button:hover{background:#1d4ed8}
+#error{color:#ef4444;margin-top:1rem;font-size:0.875rem;display:none}
+</style>
+</head>
+<body>
+<div class="card">
+    <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+    <h1>Secure File Capsule</h1>
+    <p>This file <strong>${filename}</strong> is encrypted with AES-GCM. Enter password to unlock.</p>
+    <input type="password" id="pwd" placeholder="Enter Password" autofocus>
+    <button onclick="decrypt()">Unlock & Download</button>
+    <div id="error"></div>
+</div>
+<script>
+const encryptedData = "${data}";
+const saltStr = "${salt}";
+const ivStr = "${iv}";
+const mime = "${mimeType}";
+const fname = "${filename}";
+
+function str2ab(str){const buf=new ArrayBuffer(str.length);const bufView=new Uint8Array(buf);for(let i=0,strLen=str.length;i<strLen;i++){bufView[i]=str.charCodeAt(i)}return buf}
+
+async function decrypt() {
+    const pwd = document.getElementById('pwd').value;
+    const err = document.getElementById('error');
+    err.style.display='none';
+    
+    try {
+        const enc = new TextEncoder();
+        const salt = str2ab(atob(saltStr));
+        const iv = str2ab(atob(ivStr));
+        const data = str2ab(atob(encryptedData));
+        
+        const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(pwd), {name:"PBKDF2"}, false, ["deriveKey"]);
+        const key = await window.crypto.subtle.deriveKey({name:"PBKDF2", salt:salt, iterations:100000, hash:"SHA-256"}, keyMaterial, {name:"AES-GCM", length:256}, true, ["decrypt"]);
+        
+        const decrypted = await window.crypto.subtle.decrypt({name:"AES-GCM", iv:iv}, key, data);
+        
+        // Success - Download
+        const decText = new TextDecoder().decode(decrypted);
+        const link = document.createElement('a');
+        link.href = "data:" + mime + ";base64," + decText;
+        link.download = fname;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+    } catch(e) {
+        err.textContent = "Incorrect Password or Data Corrupted";
+        err.style.display = "block";
+    }
+}
+<\/script>
+</body>
+</html>`;
+            return new Blob([htmlContent], { type: 'text/html' });
+        }
+    </script>
+</body>
+</html>
